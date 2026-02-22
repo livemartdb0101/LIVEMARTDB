@@ -1,0 +1,150 @@
+{
+  "id": 5,
+  "name": "てつを",
+  "events": [
+    {
+      "event_id": 1,
+      "date": "2025-04-13",
+      "title": "TETEFES",
+      "venue": "SHIBUYA THE GAME",
+      "venue_id": 6,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 3,
+      "date": "2025-05-06",
+      "title": "CrazyFest",
+      "venue": "巣鴨獅子王",
+      "venue_id": 7,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 2,
+      "date": "2025-05-23",
+      "title": "Journey to Blossom",
+      "venue": "巣鴨獅子王",
+      "venue_id": 7,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 14,
+      "date": "2025-06-04",
+      "title": "零落の箱庭より",
+      "venue": "池袋手刀",
+      "venue_id": 11,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 4,
+      "date": "2025-06-26",
+      "title": "On the day of my birthday",
+      "venue": "秋葉原CLUB GOODMAN",
+      "venue_id": 5,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 13,
+      "date": "2025-06-28",
+      "title": "限定Acoustic Mini Oneman（第１部）",
+      "venue": "吉祥寺DAYDREAM",
+      "venue_id": 10,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 15,
+      "date": "2025-06-28",
+      "title": "限定Acoustic Mini Oneman（第２部）",
+      "venue": "吉祥寺DAYDREAM",
+      "venue_id": 10,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 5,
+      "date": "2025-07-17",
+      "title": "FROM UDAGAWA Vol.212",
+      "venue": "東京渋谷チェルシーホテル",
+      "venue_id": 8,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 6,
+      "date": "2025-08-15",
+      "title": "HOTTY AND RHYTHM 2025",
+      "venue": "所沢航空記念公園野外ステージ",
+      "venue_id": 9,
+      "form": null,
+      "role": "Guitar"
+    },
+    {
+      "event_id": 7,
+      "date": "2025-09-14",
+      "title": "CrazyFest EXTRA-17",
+      "venue": "赤羽ReNY alpha",
+      "venue_id": 1,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 8,
+      "date": "2025-10-14",
+      "title": "ZillionAutumnFESTIVAL2025",
+      "venue": "サウンドノート名古屋",
+      "venue_id": 2,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 9,
+      "date": "2025-10-27",
+      "title": "Radiance",
+      "venue": "両国SUNRISE",
+      "venue_id": 3,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 10,
+      "date": "2025-11-20",
+      "title": "NODEBASE",
+      "venue": "吉祥寺SHUFFLE",
+      "venue_id": 4,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 11,
+      "date": "2025-12-07",
+      "title": "CrazyFest EXTRA-18",
+      "venue": "赤羽ReNY alpha",
+      "venue_id": 1,
+      "form": null,
+      "role": "Drum"
+    },
+    {
+      "event_id": 12,
+      "date": "2025-12-12",
+      "title": "レコ発３マン！全員集合！",
+      "venue": "秋葉原CLUB GOODMAN",
+      "venue_id": 5,
+      "form": null,
+      "role": "Drum"
+    }
+  ],
+  "birthday": "",
+  "joined_on": "",
+  "left_on": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": ""
+}

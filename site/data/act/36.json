@@ -1,0 +1,27 @@
+{
+  "id": 36,
+  "name": "凛月",
+  "url": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "events": [
+    {
+      "event_id": 3,
+      "date": "2025-05-06",
+      "title": "CrazyFest",
+      "form": "",
+      "seq": 2
+    },
+    {
+      "event_id": 6,
+      "date": "2025-08-15",
+      "title": "HOTTY AND RHYTHM 2025",
+      "form": "",
+      "seq": 1
+    }
+  ]
+}

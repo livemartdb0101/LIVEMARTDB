@@ -1,0 +1,27 @@
+{
+  "id": 2,
+  "name": "Sproject",
+  "url": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "events": [
+    {
+      "event_id": 4,
+      "date": "2025-06-26",
+      "title": "On the day of my birthday",
+      "form": "",
+      "seq": 4
+    },
+    {
+      "event_id": 12,
+      "date": "2025-12-12",
+      "title": "レコ発３マン！全員集合！",
+      "form": "",
+      "seq": 4
+    }
+  ]
+}

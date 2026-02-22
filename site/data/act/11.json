@@ -1,0 +1,27 @@
+{
+  "id": 11,
+  "name": "LOLIO",
+  "url": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "events": [
+    {
+      "event_id": 1,
+      "date": "2025-04-13",
+      "title": "TETEFES",
+      "form": "",
+      "seq": 7
+    },
+    {
+      "event_id": 5,
+      "date": "2025-07-17",
+      "title": "FROM UDAGAWA Vol.212",
+      "form": "",
+      "seq": 5
+    }
+  ]
+}

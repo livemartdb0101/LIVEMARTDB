@@ -1,0 +1,61 @@
+{
+  "id": 8,
+  "title": "Sence of Freedom",
+  "events": [
+    {
+      "event_id": 3,
+      "date": "2025-05-06",
+      "title": "CrazyFest",
+      "venue_id": 7,
+      "venue": "巣鴨獅子王",
+      "form": "",
+      "seq": 6,
+      "section": null,
+      "version": ""
+    },
+    {
+      "event_id": 2,
+      "date": "2025-05-23",
+      "title": "Journey to Blossom",
+      "venue_id": 7,
+      "venue": "巣鴨獅子王",
+      "form": "",
+      "seq": 4,
+      "section": null,
+      "version": ""
+    },
+    {
+      "event_id": 14,
+      "date": "2025-06-04",
+      "title": "零落の箱庭より",
+      "venue_id": 11,
+      "venue": "池袋手刀",
+      "form": "",
+      "seq": 4,
+      "section": null,
+      "version": ""
+    },
+    {
+      "event_id": 6,
+      "date": "2025-08-15",
+      "title": "HOTTY AND RHYTHM 2025",
+      "venue_id": 9,
+      "venue": "所沢航空記念公園野外ステージ",
+      "form": "",
+      "seq": 3,
+      "section": null,
+      "version": "撮影可能曲"
+    },
+    {
+      "event_id": 9,
+      "date": "2025-10-27",
+      "title": "Radiance",
+      "venue_id": 3,
+      "venue": "両国SUNRISE",
+      "form": "",
+      "seq": 3,
+      "section": null,
+      "version": ""
+    }
+  ]
+}

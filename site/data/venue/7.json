@@ -1,0 +1,19 @@
+{
+  "id": 7,
+  "name": "巣鴨獅子王",
+  "url": "",
+  "events": [
+    {
+      "id": 3,
+      "date": "2025-05-06",
+      "title": "CrazyFest",
+      "form": ""
+    },
+    {
+      "id": 2,
+      "date": "2025-05-23",
+      "title": "Journey to Blossom",
+      "form": ""
+    }
+  ]
+}

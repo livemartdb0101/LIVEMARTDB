@@ -1,0 +1,118 @@
+{
+  "id": 1,
+  "name": "QUEEN RABBIT",
+  "url": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "events": [
+    {
+      "event_id": 1,
+      "date": "2025-04-13",
+      "title": "TETEFES",
+      "form": "",
+      "seq": 6
+    },
+    {
+      "event_id": 3,
+      "date": "2025-05-06",
+      "title": "CrazyFest",
+      "form": "",
+      "seq": 6
+    },
+    {
+      "event_id": 2,
+      "date": "2025-05-23",
+      "title": "Journey to Blossom",
+      "form": "",
+      "seq": 1
+    },
+    {
+      "event_id": 14,
+      "date": "2025-06-04",
+      "title": "零落の箱庭より",
+      "form": "",
+      "seq": 1
+    },
+    {
+      "event_id": 4,
+      "date": "2025-06-26",
+      "title": "On the day of my birthday",
+      "form": "",
+      "seq": 2
+    },
+    {
+      "event_id": 13,
+      "date": "2025-06-28",
+      "title": "限定Acoustic Mini Oneman（第１部）",
+      "form": "",
+      "seq": 1
+    },
+    {
+      "event_id": 15,
+      "date": "2025-06-28",
+      "title": "限定Acoustic Mini Oneman（第２部）",
+      "form": "",
+      "seq": 1
+    },
+    {
+      "event_id": 5,
+      "date": "2025-07-17",
+      "title": "FROM UDAGAWA Vol.212",
+      "form": "",
+      "seq": 4
+    },
+    {
+      "event_id": 6,
+      "date": "2025-08-15",
+      "title": "HOTTY AND RHYTHM 2025",
+      "form": "",
+      "seq": 2
+    },
+    {
+      "event_id": 7,
+      "date": "2025-09-14",
+      "title": "CrazyFest EXTRA-17",
+      "form": "",
+      "seq": 3
+    },
+    {
+      "event_id": 8,
+      "date": "2025-10-14",
+      "title": "ZillionAutumnFESTIVAL2025",
+      "form": "",
+      "seq": 6
+    },
+    {
+      "event_id": 9,
+      "date": "2025-10-27",
+      "title": "Radiance",
+      "form": "",
+      "seq": 4
+    },
+    {
+      "event_id": 10,
+      "date": "2025-11-20",
+      "title": "NODEBASE",
+      "form": "",
+      "seq": 3
+    },
+    {
+      "event_id": 11,
+      "date": "2025-12-07",
+      "title": "CrazyFest EXTRA-18",
+      "form": "",
+      "seq": 7
+    },
+    {
+      "event_id": 12,
+      "date": "2025-12-12",
+      "title": "レコ発３マン！全員集合！",
+      "form": "",
+      "seq": 2
+    }
+  ]
+}

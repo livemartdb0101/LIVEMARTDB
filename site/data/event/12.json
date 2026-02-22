@@ -1,0 +1,138 @@
+{
+  "id": 12,
+  "date": "2025-12-12",
+  "title": "レコ発３マン！全員集合！",
+  "sub_title": null,
+  "venue": "秋葉原CLUB GOODMAN",
+  "venue_id": 5,
+  "era": "",
+  "era_id": null,
+  "tour": "",
+  "tour_id": null,
+  "form": "",
+  "video_url": "",
+  "acts": [
+    {
+      "seq": 1,
+      "name": "キングハムスター",
+      "act_id": 3
+    },
+    {
+      "seq": 2,
+      "name": "QUEEN RABBIT",
+      "act_id": 1
+    },
+    {
+      "seq": 3,
+      "name": "三田結菜",
+      "act_id": 4
+    },
+    {
+      "seq": 4,
+      "name": "Sproject",
+      "act_id": 2
+    }
+  ],
+  "lineup": [
+    {
+      "person_id": 1,
+      "name": "Misaco",
+      "role": "Vocal",
+      "position": "",
+      "ord": 1
+    },
+    {
+      "person_id": 2,
+      "name": "Sena",
+      "role": "Guitar",
+      "position": "",
+      "ord": 2
+    },
+    {
+      "person_id": 3,
+      "name": "スズムラアタル",
+      "role": "Guitar",
+      "position": "",
+      "ord": 3
+    },
+    {
+      "person_id": 4,
+      "name": "Ryo",
+      "role": "Bass",
+      "position": "",
+      "ord": 4
+    },
+    {
+      "person_id": 5,
+      "name": "てつを",
+      "role": "Drum",
+      "position": "",
+      "ord": 5
+    }
+  ],
+  "setlist": [
+    {
+      "seq": 1,
+      "song_id": 3,
+      "song_title": "DOOMSDAY",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 2,
+      "song_id": 1,
+      "song_title": "月下美人",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 3,
+      "song_id": 2,
+      "song_title": "Dolce Vita",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 4,
+      "song_id": 4,
+      "song_title": "Reincarnation",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 5,
+      "song_id": 5,
+      "song_title": "My Servant",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 6,
+      "song_id": 6,
+      "song_title": "LOVE SPIDER",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 7,
+      "song_id": 7,
+      "song_title": "OCEANUS",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    }
+  ]
+}

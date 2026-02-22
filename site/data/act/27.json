@@ -1,0 +1,27 @@
+{
+  "id": 27,
+  "name": "ユキSESSION",
+  "url": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "events": [
+    {
+      "event_id": 7,
+      "date": "2025-09-14",
+      "title": "CrazyFest EXTRA-17",
+      "form": "",
+      "seq": 10
+    },
+    {
+      "event_id": 11,
+      "date": "2025-12-07",
+      "title": "CrazyFest EXTRA-18",
+      "form": "",
+      "seq": 8
+    }
+  ]
+}

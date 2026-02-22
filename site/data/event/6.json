@@ -1,0 +1,135 @@
+{
+  "id": 6,
+  "date": "2025-08-15",
+  "title": "HOTTY AND RHYTHM 2025",
+  "sub_title": null,
+  "venue": "所沢航空記念公園野外ステージ",
+  "venue_id": 9,
+  "era": "",
+  "era_id": null,
+  "tour": "",
+  "tour_id": null,
+  "form": "",
+  "video_url": "",
+  "acts": [
+    {
+      "seq": 1,
+      "name": "凛月",
+      "act_id": 36
+    },
+    {
+      "seq": 2,
+      "name": "QUEEN RABBIT",
+      "act_id": 1
+    },
+    {
+      "seq": 3,
+      "name": "RED HELLS",
+      "act_id": 37
+    },
+    {
+      "seq": 4,
+      "name": "BELLE ROSE",
+      "act_id": 38
+    },
+    {
+      "seq": 5,
+      "name": "小原涼",
+      "act_id": 39
+    },
+    {
+      "seq": 6,
+      "name": "START TO BLING",
+      "act_id": 40
+    },
+    {
+      "seq": 7,
+      "name": "sari",
+      "act_id": 41
+    }
+  ],
+  "lineup": [
+    {
+      "person_id": 1,
+      "name": "Misaco",
+      "role": "Vocal",
+      "position": "",
+      "ord": 1
+    },
+    {
+      "person_id": 2,
+      "name": "Sena",
+      "role": "Guitar",
+      "position": "",
+      "ord": 2
+    },
+    {
+      "person_id": 3,
+      "name": "スズムラアタル",
+      "role": "Guitar",
+      "position": "",
+      "ord": 3
+    },
+    {
+      "person_id": 4,
+      "name": "Ryo",
+      "role": "Bass",
+      "position": "",
+      "ord": 4
+    },
+    {
+      "person_id": 5,
+      "name": "てつを",
+      "role": "Guitar",
+      "position": "",
+      "ord": 5
+    }
+  ],
+  "setlist": [
+    {
+      "seq": 1,
+      "song_id": 7,
+      "song_title": "OCEANUS",
+      "section": null,
+      "version": "撮影可能曲",
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 2,
+      "song_id": 1,
+      "song_title": "月下美人",
+      "section": null,
+      "version": "撮影可能曲",
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 3,
+      "song_id": 8,
+      "song_title": "Sence of Freedom",
+      "section": null,
+      "version": "撮影可能曲",
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 4,
+      "song_id": 2,
+      "song_title": "Dolce Vita",
+      "section": null,
+      "version": "撮影可能曲",
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 5,
+      "song_id": 6,
+      "song_title": "LOVE SPIDER",
+      "section": null,
+      "version": "撮影可能曲",
+      "note": "",
+      "performer": []
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": 6,
+  "name": "神様のアリバイ",
+  "url": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "events": [
+    {
+      "event_id": 5,
+      "date": "2025-07-17",
+      "title": "FROM UDAGAWA Vol.212",
+      "form": "",
+      "seq": 2
+    },
+    {
+      "event_id": 10,
+      "date": "2025-11-20",
+      "title": "NODEBASE",
+      "form": "",
+      "seq": 2
+    }
+  ]
+}

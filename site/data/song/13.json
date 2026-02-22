@@ -1,0 +1,39 @@
+{
+  "id": 13,
+  "title": "Paradigm Shift",
+  "events": [
+    {
+      "event_id": 2,
+      "date": "2025-05-23",
+      "title": "Journey to Blossom",
+      "venue_id": 7,
+      "venue": "巣鴨獅子王",
+      "form": "",
+      "seq": 8,
+      "section": null,
+      "version": ""
+    },
+    {
+      "event_id": 4,
+      "date": "2025-06-26",
+      "title": "On the day of my birthday",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
+      "form": "",
+      "seq": 4,
+      "section": null,
+      "version": ""
+    },
+    {
+      "event_id": 11,
+      "date": "2025-12-07",
+      "title": "CrazyFest EXTRA-18",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
+      "form": "",
+      "seq": 5,
+      "section": null,
+      "version": ""
+    }
+  ]
+}
