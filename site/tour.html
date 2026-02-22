@@ -102,5 +102,19 @@
 
     main();
   </script>
+  <div style="margin-top:20px;">
+    <a id="reportLink" target="_blank">このページの誤りを報告</a>
+  </div>
+
+  <script src="../googleform.js"></script>
+  <script>
+  // Google Form の URL を生成（現在のページURLを自動付与）
+  const formURL =
+    `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
+    + encodeURIComponent(location.href);
+
+  // a タグにセット
+  document.getElementById("reportLink").href = formURL;
+  </script>
 </body>
 </html>
