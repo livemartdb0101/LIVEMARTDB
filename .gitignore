@@ -30,6 +30,7 @@ Thumbs.db
 .env
 *.tmp
 *.md
+*.jpg
 *.csv
 *.xlsx
 *.pdf
@@ -39,7 +40,6 @@ Thumbs.db
 *.ttf
 old/
 jpg/
-screenshot/
 *_new.py
 _template*.py
 *.sh
