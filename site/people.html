@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Member</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 4px 8px; }
+    img { max-width: 300px; border: 1px solid #ccc; margin: 10px 0; }
+    /* クリック拡大用ライトボックス */
+    .lightbox[hidden]{ display:none; }
+    .lightbox{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.8); cursor:zoom-out;
+    }
+    .lightbox img{
+      max-width:min(90vw,1200px); max-height:90vh;
+      box-shadow:0 8px 24px rgba(0,0,0,.4); border-radius:4px; background:#fff;
+    }
+
+
+    /* ギャラリー（幅固定・比率維持） */
+    #gallery {
+      display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;
+    }
+    #gallery img {
+      width: 160px;     /* ★ 幅基準（好みで 120/150/180 など） */
+      height: auto;     /* ★ アスペクト比維持 */
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: opacity .2s ease;
+    }
+
+
+  </style>
+</head>
+<body>
+  <a href="index.html">← 検索に戻る</a>
+  <div id="content"></div>
+  <div id="lightbox" class="lightbox" hidden>
+    <img id="lightbox-img" alt="">
+  </div>
+    <script>
+      function getId(){ const params=new URLSearchParams(location.search); return params.get('id'); }
+
+      function normalizeUrl(u) {
+        const s = String(u || '').trim();
+        if (!s || /^\s*javascript:/i.test(s)) return '';
+        try {
+          const url = new URL(s.includes('://') ? s : `https://${s}`);
+          return url.toString();
+        } catch {
+          return '';
+        }
+      }
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      }
+
+      async function collectGalleryImages(id) {
+        const base = 'image';               // 今の構造に合わせてある
+        const list = [];
+        for (let i = 1; i <= 5; i++) {     // 50枚まで連番チェック
+          const path = `${base}/people_${id}_${i}.webp`;
+          try {
+            const r = await fetch(path, { method: 'HEAD' });
+            if (!r.ok) break;
+            list.push(path);
+          } catch {
+            break;
+          }
+        }
+        return list;
+      }
+
+      async function main(){
+        const id = getId();
+        if(!id) return;
+
+        const mem = await fetch(`data/people/${id}.json`).then(r=>r.json());
+        const div = document.getElementById('content');
+
+        let html = '';
+        html += `<h1>${mem.name}</h1>`;
+
+        // 画像 people_<id>.webp
+        const imgPath = `image/people_${id}.webp`;
+
+        html += `
+          <p>
+            <img id="member-photo content-img"
+                src="${imgPath}"
+                alt="${mem.name}"
+                onerror="this.style.display='none'">
+          </p>
+        `;
+
+        // ▼ 追加：プロフィール（文字列のみ、あるものだけ）
+        if ((mem.birthday ?? '').trim()) {
+          html += `<p>生年月日：${mem.birthday}</p>`;
+        }
+        const from = (mem.joined_on ?? '').trim();
+        const to   = (mem.left_on   ?? '').trim();
+        if (from || to) {
+          const toLabel = to || '現在';
+          html += `<p>在籍：${from || '???'} 〜 ${toLabel}</p>`;
+        }
+
+        const snsList = [
+          ['X',         mem.x],
+          ['Instagram', mem.instagram],
+          ['Threads',   mem.threads],
+          ['Facebook',  mem.facebook],
+          ['YouTube',   mem.youtube],
+          ['TikTok',    mem.tiktok],
+        ];
+
+
+        snsList.forEach(([label, value]) => {
+          const u = (value ?? '').trim();
+          if (!u) return;
+
+          const url = normalizeUrl(u);
+          if (!url) return;  // 不正URLはスキップ（後述の normalizeUrl を使用）
+
+          // リンクテキストに label を使う
+          html += `<p><a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a></p>`;
+        });
+
+
+
+        if (mem.events && mem.events.length){
+          html += `<h3>出演イベント一覧</h3>`;
+          html += `<table>
+            <tr>
+              <th>日付</th><th>イベント</th><th>会場</th><th>形態</th><th>役割</th>
+            </tr>`;
+          mem.events.forEach(e=>{
+            html += `<tr>
+              <td>${e.date}</td>
+              <td><a href="event.html?id=${e.event_id}">${e.title}</a></td>
+              <td><a href="venue.html?id=${e.venue_id}">${e.venue}</a></td>
+              <td>${e.form || ''}</td>
+              <td>${e.role}</td>
+            </tr>`;
+          });
+          html += `</table>`;
+        }else{
+          html += `<p>出演履歴なし</p>`;
+        }
+
+        div.innerHTML = html;
+
+        // ▼ ギャラリー画像一覧
+        const gallery = await collectGalleryImages(id);
+        if (gallery.length > 0) {
+          // コンテナを先に挿入（wrapでOK。枠ゴースト防止はJS側で制御）
+          div.insertAdjacentHTML(
+            'beforeend',
+            '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;"></div>'
+          );
+          const container = document.getElementById('gallery');
+
+          // 画像：いったん透明で挿入 → onloadで可視化、onerrorで削除
+          gallery.forEach((src, idx) => {
+            const img = document.createElement('img');
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.alt = '';
+            img.dataset.idx = String(idx); // スライド用にインデックス保持
+            // img.style.cssText = 'width:120px;height:auto;border:1px solid #ccc;border-radius:4px;cursor:pointer;opacity:0;';
+            img.style.opacity = '0'; // フェードインだけ
+
+            // ロード成功 → 表示
+            img.onload = () => { img.style.opacity = '1'; };
+            // 失敗 → DOMから除去（= 枠ゴーストなし）
+            img.onerror = () => { img.remove(); };
+
+            // クリック → 既存のライトボックス＋スライドを利用
+            img.addEventListener('click', () => {
+              currentGallery = gallery;                // 既存の変数を更新
+              currentIndex   = Number(img.dataset.idx);
+              openGalleryImage();                      // 既存の関数を呼ぶ（lbを開く）
+            });
+
+            container.appendChild(img); // 先に差し込む
+            img.src = src;              // 最後にsrcセット（onload取りこぼし防止）
+          });
+        }
+
+        // ▼ ギャラリー用の変数
+        let currentGallery = [];
+        let currentIndex = 0;
+
+        // ▼ ギャラリー表示関数（ライトボックスを流用）
+        function openGalleryImage() {
+          const src = currentGallery[currentIndex];
+          lbImg.src = src;
+          lb.hidden = false;
+          document.body.style.overflow = 'hidden';
+        }
+
+        // ▼ 左右矢印キーで前後へ
+        document.addEventListener('keydown', (e) => {
+          if (lb.hidden) return;
+          if (e.key === 'ArrowRight' && currentIndex < currentGallery.length - 1) {
+            currentIndex++;
+            openGalleryImage();
+          }
+          if (e.key === 'ArrowLeft' && currentIndex > 0) {
+            currentIndex--;
+            openGalleryImage();
+          }
+        });
+
+
+        // ▼ ここから追記：クリックで拡大
+        const img = document.getElementById('member-photo');
+        if (img) {
+          img.addEventListener('click', () => openLightbox(img.src, img.alt));
+        }
+      }
+
+      // ▼ ライトボックス本体（追記）
+      const lb = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightbox-img');
+
+      function openLightbox(src, alt){
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+        lb.hidden = false;
+        document.body.style.overflow = 'hidden'; // 背景スクロール抑止
+      }
+      function closeLightbox(){
+        lb.hidden = true;
+        lbImg.src = '';
+        document.body.style.overflow = '';
+      }
+      // クリック/ESCで閉じる
+      lb.addEventListener('click', closeLightbox);
+      document.addEventListener('keydown', (e)=>{
+        if (!lb.hidden && e.key === 'Escape') closeLightbox();
+      });
+
+      main();
+    </script>
+  <div style="margin-top:20px;">
+    <a id="reportLink" target="_blank">このページの誤りを報告</a>
+  </div>
+
+  <script>
+  const FORM_ID = "1FAIpQLScoYyPTdZQnwZT2pgRcreniB38rwRNJKe9145A9jgZZTa1Ydg";
+  const ENTRY_ID = "1382995699";
+
+  // Google Form の URL を生成（現在のページURLを自動付与）
+  const formURL =
+    `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
+    + encodeURIComponent(location.href);
+
+  // a タグにセット
+  document.getElementById("reportLink").href = formURL;
+  </script>
+</body>
+</html>

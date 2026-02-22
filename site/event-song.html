@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Event Song Detail</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 20px; }
+    h1 { margin-bottom: 0; }
+    table { border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 4px 8px; }
+    /* クリック拡大用ライトボックス */
+    .lightbox[hidden]{ display:none; }
+    .lightbox{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.8); cursor:zoom-out;
+    }
+    .lightbox img{
+      max-width:min(90vw,1200px); max-height:90vh;
+      box-shadow:0 8px 24px rgba(0,0,0,.4); border-radius:4px; background:#fff;
+    }
+  </style>
+  <style>
+    /* Lineup は border なし */
+    table.lineup-table {
+      border-collapse: collapse;
+      margin: 6px 0 12px;
+    }
+    table.lineup-table td {
+      border: none !important;
+      padding: 2px 6px;
+    }
+  </style>
+
+</head>
+<body>
+  <a id="back-event" href="#">← イベントに戻る</a> |
+  <a id="back-song" href="#">曲の全履歴を見る</a>
+
+  <div id="content"></div>
+  <div id="lightbox" class="lightbox" hidden>
+    <img id="lightbox-img" alt="">
+  </div>
+
+    <script>
+    function getParams() {
+        const p = new URLSearchParams(location.search);
+        return {
+        event: p.get("event"),
+        song: p.get("song"),
+        seq: p.get("seq")
+        };
+    }
+
+    async function fileExists(url) {
+    try {
+        const r = await fetch(url, { method:'HEAD', cache:'no-cache' });
+        return r.ok;
+    } catch { return false; }
+    }
+
+    /** このイベント×曲順のギャラリーを収集 */
+    async function collectEventSongGallery(eventId, seq) {
+    const urls = [];
+    for (let i = 1; i <= 5; i++) {
+        const u = `image/event_song_${eventId}_${seq}_${i}.webp`;
+        if (await fileExists(u)) urls.push(u); else break;
+    }
+    return urls;
+    }
+
+    async function main() {
+        const { event, song, seq } = getParams();
+        if (!event || !song) return;
+
+        // イベント詳細を取得
+        const ev = await fetch(`data/event/${event}.json`).then(r => r.json());
+
+        // 対象の曲を探す
+        const s = ev.setlist.find(x => x.song_id == song && x.seq == seq);
+        if (!s) {
+        document.getElementById("content").innerHTML = "<p>データが見つかりません。</p>";
+        return;
+        }
+
+        // 曲名
+        const title = s.song_title;
+
+        // この曲の全出演イベント（song/{id}.json）
+        const songDetail = await fetch(`data/song/${song}.json`).then(r => r.json());
+        const otherEvents = (songDetail.events || []).filter(e => e.event_id != Number(event));
+
+
+        // performer（Lineup と同じ2列テーブルで整形）
+        let perf = "";
+        if (s.performer && s.performer.length) {
+          perf += `<table class="lineup-table">`;
+          s.performer.forEach(p => {
+            const role = p.position
+              ? `${p.role}（${p.position}）`
+              : p.role;
+
+            perf += `
+              <tr>
+                <td>${role}</td>
+                <td>：<a href="people.html?id=${p.person_id}">${p.name}</a></td>
+              </tr>`;
+          });
+          perf += `</table>`;
+        }
+
+        // （任意）XSS対策の軽いエスケープ
+        function escapeHtml(s) {
+          return String(s ?? '').replace(/[&<>"']/g, m => ({
+            '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+          }[m]));
+        }
+
+
+        // HTML 出力
+        let html = "";
+        html += `<h1>${escapeHtml(title)}</h1>`;
+
+        // ▼ ここ：タイトルにイベント詳細へのリンク
+        const eventLink = ev?.id != null
+          ? `<a href="event.html?id=${ev.id}">${escapeHtml(ev.title)}</a>`
+          : escapeHtml(ev.title || "");
+
+        // ▼ ここ：会場名に会場詳細へのリンク（venue_id があればリンク、なければ文字だけ）
+        const venueLink = ev?.venue_id != null
+          ? `<a href="venue.html?id=${ev.venue_id}">${escapeHtml(ev.venue || "")}</a>`
+          : escapeHtml(ev.venue || "");
+
+        // html += `<h1>${title}</h1>`;
+        html += `<p>${escapeHtml(ev.date)} 「${eventLink}」の ${escapeHtml(seq)} 曲目</p>`;
+        html += `<p>会場: ${venueLink}</p>`;
+        html += `<p>Version: ${s.version || ""}</p>`;
+        html += `<p>Note: ${s.note || ""}</p>`;
+
+        html += `<h3>Performer</h3>`;
+        html += `<p>${perf}</p>`;
+
+        // ★ この曲の他の出演イベント（表形式）
+        if (otherEvents.length > 0) {
+        html += `<h3>この曲の他の出演イベント</h3>`;
+        html += `<table>
+            <tr>
+            <th>日付</th>
+            <th>イベント</th>
+            <th>会場</th>
+            <th>#</th>
+            </tr>`;
+
+        otherEvents.forEach(e => {
+            html += `
+            <tr>
+                <td>${e.date}</td>
+                <td><a href="event.html?id=${e.event_id}">${e.title}</a></td>
+                <td><a href="venue.html?id=${e.venue_id}">${e.venue}</a></td>
+                <td><a href="event-song.html?event=${e.event_id}&song=${song}&seq=${e.seq}">${e.seq}</a></td>
+            </tr>`;
+        });
+
+        html += `</table>`;
+        }
+
+        document.getElementById("content").innerHTML = html;
+
+        // ▼ ここからギャラリーを描画
+        const gallery = await collectEventSongGallery(event, seq);
+        if (gallery.length > 0) {
+        const host = document.getElementById("content");
+
+        // コンテナを先に挿す
+        host.insertAdjacentHTML(
+            'beforeend',
+            '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>'
+        );
+        const container = document.getElementById('gallery');
+
+        // 画像を生成→いったん透明で挿す→onloadで可視化、onerrorで除去
+        for (const src of gallery) {
+            const img = document.createElement('img');
+            img.loading = 'lazy';
+            img.decoding = 'async';
+            img.alt = '';
+            img.style.cssText = 'width:160px;height:auto;border:1px solid #ccc;border-radius:4px;cursor:zoom-in;opacity:0;';
+
+            img.onload = () => { img.style.opacity = '1'; };
+            img.onerror = () => { img.remove(); };
+            img.addEventListener('click', () => openLightbox(src, ''));
+
+            container.appendChild(img);  // 先に差し込む
+            img.src = src;               // 最後に src をセット
+        }
+        }
+
+
+        // 戻りリンク
+        document.getElementById("back-event").href = `event.html?id=${event}`;
+        document.getElementById("back-song").href = `song.html?id=${song}`;
+    }
+
+        // ▼ ライトボックス本体（追記）
+        const lb = document.getElementById('lightbox');
+        const lbImg = document.getElementById('lightbox-img');
+
+        function openLightbox(src, alt){
+        lbImg.src = src;
+        lbImg.alt = alt || '';
+        lb.hidden = false;
+        document.body.style.overflow = 'hidden'; // 背景スクロール抑止
+        }
+        function closeLightbox(){
+        lb.hidden = true;
+        lbImg.src = '';
+        document.body.style.overflow = '';
+        }
+        // クリック/ESCで閉じる
+        lb.addEventListener('click', closeLightbox);
+        document.addEventListener('keydown', (e)=>{
+        if (!lb.hidden && e.key === 'Escape') closeLightbox();
+        });
+
+    main();
+    </script>
+
+  <div style="margin-top:20px;">
+    <a id="reportLink" target="_blank">このページの誤りを報告</a>
+  </div>
+
+  <script>
+  const FORM_ID = "1FAIpQLScoYyPTdZQnwZT2pgRcreniB38rwRNJKe9145A9jgZZTa1Ydg";
+  const ENTRY_ID = "1382995699";
+
+  // Google Form の URL を生成（現在のページURLを自動付与）
+  const formURL =
+    `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
+    + encodeURIComponent(location.href);
+
+  // a タグにセット
+  document.getElementById("reportLink").href = formURL;
+  </script>
+</body>
+</html>

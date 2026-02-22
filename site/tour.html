@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Tour</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 4px 8px; }
+    img { max-width: 300px; border: 1px solid #ccc; margin: 10px 0; }
+
+    /* クリック拡大用ライトボックス */
+    .lightbox[hidden]{ display:none; }
+    .lightbox{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.8); cursor:zoom-out;
+    }
+    .lightbox img{
+      max-width:min(90vw,1200px); max-height:90vh;
+      box-shadow:0 8px 24px rgba(0,0,0,.4); border-radius:4px; background:#fff;
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html">← 検索に戻る</a>
+  <div id="content"></div>
+  <!-- ライトボックス（拡大画像表示用） -->
+  <div id="lightbox" class="lightbox" hidden>
+    <img id="lightbox-img" alt="">
+  </div>
+  <script>
+    function getId() {
+      return new URLSearchParams(location.search).get('id');
+    }
+
+    async function main() {
+      const id = getId();
+      if (!id) return;
+
+      const tour = await fetch(`data/tour/${id}.json`).then(r => r.json());
+      let html = '';
+
+      html += `<h1>${tour.name}</h1>`;
+
+      // Era 画像（存在しなければ非表示 / クリックで拡大）
+      const imgPath = `image/tour_${id}.webp`;
+      html += `
+        <p>
+          <img class="zoomable" src="${imgPath}" alt="${tour.name}"
+               onerror="this.style.display='none'">
+        </p>
+      `;
+
+      if (tour.events && tour.events.length) {
+        html += `<h3>イベント一覧</h3>`;
+        html += `<table>
+          <tr><th>日付</th><th>タイトル</th><th>形態</th></tr>`;
+
+        tour.events.forEach(ev => {
+          html += `<tr>
+            <td>${ev.date}</td>
+            <td><a href="event.html?id=${ev.id}">${ev.title}</a></td>
+            <td>${ev.form}</td>
+          </tr>`;
+        });
+
+        html += `</table>`;
+      } else {
+        html += `<p>イベントなし</p>`;
+      }
+
+      document.getElementById('content').innerHTML = html;
+    }
+
+    // ----- ライトボックス本体 -----
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+
+    function openLightbox(src, alt){
+      lbImg.src = src;
+      lbImg.alt = alt || '';
+      lb.hidden = false;
+      document.body.style.overflow = 'hidden'; // 背景スクロール抑止
+    }
+    function closeLightbox(){
+      lb.hidden = true;
+      lbImg.src = '';
+      document.body.style.overflow = '';
+    }
+
+    // 画像クリックで拡大（zoomable に対するイベント委譲）
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img.zoomable');
+      if (img) openLightbox(img.src, img.alt);
+    });
+    // オーバーレイクリック/ESCで閉じる
+    lb.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', (e) => {
+      if (!lb.hidden && e.key === 'Escape') closeLightbox();
+    });
+
+    main();
+  </script>
+</body>
+</html>

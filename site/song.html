@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Song</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 4px 8px; }
+    img { max-width: 300px; border: 1px solid #ccc; margin: 10px 0; }
+
+    /* クリック拡大用ライトボックス */
+    .lightbox[hidden]{ display:none; }
+    .lightbox{
+      position:fixed; inset:0; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.8); cursor:zoom-out;
+    }
+    .lightbox img{
+      max-width:min(90vw,1200px); max-height:90vh;
+      box-shadow:0 8px 24px rgba(0,0,0,.4); border-radius:4px; background:#fff;
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html">← 検索に戻る</a>
+  <div id="content"></div>
+
+  <!-- ライトボックス（拡大画像表示用） -->
+  <div id="lightbox" class="lightbox" hidden>
+    <img id="lightbox-img" alt="">
+  </div>
+
+  <script>
+    function getId() {
+      const params = new URLSearchParams(location.search);
+      return params.get('id');
+    }
+
+    async function main() {
+      const id = getId();
+      if (!id) return;
+
+      const song = await fetch(`data/song/${id}.json`).then(r => r.json());
+      const div = document.getElementById('content');
+
+      let html = '';
+      html += `<h1>${song.title}</h1>`;
+
+      // ジャケット画像 song_<id>.webp（存在しない場合は非表示）
+      const imgPath = `image/song_${id}.webp`;
+      html += `
+        <p>
+          <img class="zoomable" src="${imgPath}" alt="${song.title}"
+               onerror="this.style.display='none'">
+        </p>
+      `;
+
+      if (song.events && song.events.length) {
+        html += `<h3>演奏イベント一覧</h3>`;
+        html += `<table>
+          <tr>
+            <th>日付</th>
+            <th>イベント</th>
+            <th>会場</th>
+            <th>形態</th>
+            <th>#</th>
+            <th>Section</th>
+            <th>Version</th>
+          </tr>`;
+
+        song.events.forEach(e => {
+          html += `<tr>
+            <td>${e.date}</td>
+            <td><a href="event.html?id=${e.event_id}">${e.title}</a></td>
+            <td><a href="venue.html?id=${e.venue_id}">${e.venue}</a></td>
+            <td>${e.form || ''}</td>
+            <td><a href="event-song.html?event=${e.event_id}&song=${song.id}&seq=${e.seq}">${e.seq}</a></td>
+            <td>${e.section || ''}</td>
+            <td>${e.version || ''}</td>
+          </tr>`;
+        });
+
+        html += `</table>`;
+      } else {
+        html += `<p>演奏履歴なし</p>`;
+      }
+
+      div.innerHTML = html;
+      // ※ クリックハンドラはイベント委譲で下に一括定義
+    }
+
+    // ----- ライトボックス本体 -----
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+
+    function openLightbox(src, alt){
+      lbImg.src = src;
+      lbImg.alt = alt || '';
+      lb.hidden = false;
+      document.body.style.overflow = 'hidden'; // 背景スクロール抑止
+    }
+    function closeLightbox(){
+      lb.hidden = true;
+      lbImg.src = '';
+      document.body.style.overflow = '';
+    }
+
+    // 画像クリックで拡大（zoomable に対するイベント委譲）
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img.zoomable');
+      if (img) openLightbox(img.src, img.alt);
+    });
+    // オーバーレイクリック/ESCで閉じる
+    lb.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', (e) => {
+      if (!lb.hidden && e.key === 'Escape') closeLightbox();
+    });
+
+    main();
+  </script>
+  <div style="margin-top:20px;">
+    <a id="reportLink" target="_blank">このページの誤りを報告</a>
+  </div>
+
+  <script>
+  const FORM_ID = "1FAIpQLScoYyPTdZQnwZT2pgRcreniB38rwRNJKe9145A9jgZZTa1Ydg";
+  const ENTRY_ID = "1382995699";
+
+  // Google Form の URL を生成（現在のページURLを自動付与）
+  const formURL =
+    `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
+    + encodeURIComponent(location.href);
+
+  // a タグにセット
+  document.getElementById("reportLink").href = formURL;
+  </script>
+</body>
+</html>
