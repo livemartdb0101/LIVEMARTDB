@@ -625,10 +625,11 @@ git config --global user.email &quot;karinomeado0101@gmail.com&quot;　　←読
 <p>エクスプローラで以下のフォルダを開きます。</p>
 <pre class="hljs"><code><div>%HOMEPATH%/.ssh
 </div></code></pre>
-<p>開いた .ssh フォルダにファイル「id_ed25519」存在すれば次の 5-2-1. は <strong>必ず</strong> 飛ばしてください。</p>
+<p>開いた .ssh フォルダにファイル「<strong>id_ed25519</strong>」が存在する場合は、次の 5-2-1. は <strong>実行しない</strong> でください。</p>
+<br>
 <h3 id="5-2-1-ssh%E9%8D%B5%E3%81%AE%E4%BD%9C%E6%88%90">5-2-1. SSH鍵の作成</h3>
 <p>macOS の場合は Terminalで、Windowsの場合は Git bash で、</p>
-<pre class="hljs"><code><div>ssh-keygen -t ed25519 -C &quot;karinomeado0101@gmail.com&quot;
+<pre class="hljs"><code><div>ssh-keygen -t ed25519 -C &quot;karinomeado0101@gmail.com&quot;　　←読み替えてね
 </div></code></pre>
 <p>Enter を3回押してOK。</p>
 <p>ちなみに Windows の Git bash はココから起動します
@@ -651,11 +652,13 @@ git config --global user.email &quot;karinomeado0101@gmail.com&quot;　　←読
 <li>id_ed25519.pub</li>
 </ul>
 <p>２つのファイルがあります。</p>
-<p>※ファイル「id_ed25519」が無い場合は 5-2-1. を実行します。さっき飛ばした場合も実行してください。</p>
+<p>※ファイル「id_ed25519」が <strong>無い場合</strong> は 5-2-1. を実行します。さっき飛ばした場合も実行してください。</p>
+<br>
 <h4 id="%E7%A7%98%E5%AF%86%E9%8D%B5">秘密鍵</h4>
 <p>id_ed25519　は超大事なファイル。物理鍵とか印鑑とかパスワードのイメージ。</p>
 <h4 id="%E5%85%AC%E9%96%8B%E9%8D%B5">公開鍵</h4>
 <p>id_ed25519.pub　は鍵穴とか印鑑証明書とか口座番号。こちらを GitHub に登録します。</p>
+<br>
 <h4 id="github-%E3%81%AB%E5%85%AC%E9%96%8B%E9%8D%B5%E3%81%AE%E7%99%BB%E9%8C%B2">GitHub に公開鍵の登録</h4>
 <p>id_ed25519.pub の中身（テキストファイルです）を</p>
 <p>https://github.com/settings/ssh/new</p>
@@ -873,7 +876,7 @@ python event_editor_tk.py
 <pre class="hljs"><code><div>https://〇〇〇〇.github.io/BANDNAME/site/　　←読み替えてね
 </div></code></pre>
 <p>にアクセスすることで表示されると思います。</p>
-<p>このままでは Gitユーザー名「〇〇〇〇」や、プロジェクト名「BANDNAME」がバッチリ出ちゃってて、正直気持ち悪いので第３章も読んでね。</p>
+<p>このままでは Gitユーザー名「〇〇〇〇」や、プロジェクト名「BANDNAME」がバッチリ出ちゃってて正直気持ち悪いので、一般公開（URLアナウンス）する前に第３章も読んでね。</p>
 <p><br><br>
 <br><br>
 <br><br>
@@ -890,6 +893,7 @@ python event_editor_tk.py
 <li>GitHub を Private にする</li>
 <li>アクセス確認をする</li>
 </ol>
+<br>
 <h2 id="cloudflare-%E3%81%A8%E3%81%AF">Cloudflare とは？</h2>
 <p>サイトを超快適・超便利にしてくれます</p>
 <ul>
@@ -935,6 +939,7 @@ python event_editor_tk.py
 <p><br><br></p>
 <h1 id="%EF%BC%94-%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E7%A2%BA%E8%AA%8D%E3%82%92%E3%81%99%E3%82%8B">４. アクセス確認をする</h1>
 <p>ブラウザ、もしくはスマホから確認します</p>
+<br>
 <h2 id="4-1-github-pages-%E3%81%A7%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%84%E3%81%93%E3%81%A8">4-1. GitHub Pages でアクセスできないこと</h2>
 <pre class="hljs"><code><div>https://〇〇〇〇.github.io/BANDNAME/site/　　←読み替えてね
 </div></code></pre>
