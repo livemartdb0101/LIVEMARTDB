@@ -1720,7 +1720,7 @@ class App(ttk.Frame):
                 """, (self.event_id, seq, r["member_id"], r["role"], i))
 
             load_performers()
-            messagebox.showinfo("適用", "lineup の並び順どおりに適用しました。")
+            # messagebox.showinfo("適用", "lineup の並び順どおりに適用しました。")
 
         # ボタン群
         ttk.Button(ctl, text="追加", command=add_perf).grid(row=0, column=7, sticky="w", padx=(8,0))
