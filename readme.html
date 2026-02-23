@@ -552,6 +552,10 @@ code {
 <h3 id="%E5%AE%8C%E4%BA%86">完了</h3>
 <p><br><br></p>
 <h1 id="%EF%BC%93-github-%E3%81%AB%E7%A9%BA%E3%81%AE%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E3%82%92%E4%BD%9C%E3%82%8B--%EF%BC%92%E5%88%86">３. GitHub に空のリポジトリを作る- （２分）</h1>
+<p>リポジトリって何？</p>
+<ul>
+<li>プロジェクトのオンラインフォルダみたいなものです。</li>
+</ul>
 <h3 id="new-repository">New Repository</h3>
 <ul>
 <li>GitHub 右上の <strong>＋</strong></li>
@@ -618,7 +622,7 @@ git config --global user.email &quot;karinomeado0101@gmail.com&quot;　　←読
 </div></code></pre>
 <p><br><br></p>
 <h2 id="5-2-ssh%E3%81%AE%E8%A8%AD%E5%AE%9A">5-2. SSHの設定</h2>
-<p>鍵のセットを作ります。鍵と鍵穴的な</p>
+<p>鍵のセットを作ります。「鍵と南京錠」的な</p>
 <br>
 <h3 id="5-2-0-ssh%E9%8D%B5%E3%81%AE%E7%A2%BA%E8%AA%8D">5-2-0. SSH鍵の確認</h3>
 <p>既存のSSH関連ファイルが <strong>無い事</strong> を確認します。</p>
@@ -630,19 +634,27 @@ git config --global user.email &quot;karinomeado0101@gmail.com&quot;　　←読
 <p>エクスプローラで以下のフォルダを開きます。</p>
 <pre class="hljs"><code><div>%HOMEPATH%/.ssh
 </div></code></pre>
+<p>フォルダが無ければ 5-2-1. に進みます。</p>
 <p>開いた .ssh フォルダにファイル「<strong>id_ed25519</strong>」が存在する場合は、次の 5-2-1. は <strong>実行しない</strong> でください。</p>
 <br>
 <h3 id="5-2-1-ssh%E9%8D%B5%E3%81%AE%E4%BD%9C%E6%88%90">5-2-1. SSH鍵の作成</h3>
 <p>macOS の場合は Terminalで、Windowsの場合は Git bash で、</p>
 <pre class="hljs"><code><div>ssh-keygen -t ed25519 -C &quot;karinomeado0101@gmail.com&quot;　　←読み替えてね
 </div></code></pre>
+<p>と入力して</p>
+<pre class="hljs"><code><div>Generating public/private ed25519 key pair.
+Enter file in which to save the key (/home/yourname/.ssh/id_ed25519):　　←ココと
+Enter passphrase (empty for no passphrase):　　←ココと
+Enter same passphrase again:　　←ココと
+</div></code></pre>
 <p>Enter を3回押してOK。</p>
+<br>
 <p>ちなみに Windows の Git bash はココから起動します
 <br>
 <img width="200" alt="Windows" src="git_bash1.png"></p>
 <p><br><br></p>
 <h3 id="5-2-2-ssh%E9%8D%B5%E3%81%AE%E7%A2%BA%E8%AA%8D">5-2-2. SSH鍵の確認</h3>
-<p>南京錠を設置するイメージ</p>
+<p>「鍵」と「南京錠」の確認</p>
 <h4 id="macos-%E3%81%AE%E5%A0%B4%E5%90%88">macOS の場合</h4>
 <p>Terminal で以下のコマンドをうちます。</p>
 <pre class="hljs"><code><div>open ~/.ssh
@@ -659,13 +671,14 @@ git config --global user.email &quot;karinomeado0101@gmail.com&quot;　　←読
 <p>２つのファイルがあります。</p>
 <p>※ファイル「id_ed25519」が <strong>無い場合</strong> は 5-2-1. を実行します。さっき飛ばした場合も実行してください。</p>
 <br>
-<h4 id="%E7%A7%98%E5%AF%86%E9%8D%B5">秘密鍵</h4>
-<p>id_ed25519　は超大事なファイル。物理鍵とか印鑑とかパスワードのイメージ。</p>
-<h4 id="%E5%85%AC%E9%96%8B%E9%8D%B5">公開鍵</h4>
-<p>id_ed25519.pub　は鍵穴とか印鑑証明書とか口座番号。こちらを GitHub に登録します。</p>
+<h4 id="%E7%A7%98%E5%AF%86%E9%8D%B5-%E2%86%90-%E9%8D%B5">秘密鍵　←　鍵</h4>
+<p>id_ed25519　は超大事なファイル。物理鍵とか実印とかのイメージ。鍵無くすと、、、わかるよね？</p>
+<h4 id="%E5%85%AC%E9%96%8B%E9%8D%B5-%E2%86%90-%E5%8D%97%E4%BA%AC%E9%8C%A0">公開鍵　←　南京錠</h4>
+<p>id_ed25519.pub　は南京錠とか口座番号。知られても見られても問題無い公開鍵を GitHub に登録します。</p>
 <br>
 <h3 id="5-2-2-ssh%E5%85%AC%E9%96%8B%E9%8D%B5%E3%81%AE%E7%99%BB%E9%8C%B2">5-2-2. SSH公開鍵の登録</h3>
 <p>公開鍵を GitHub に登録します</p>
+<p>南京錠を設置するイメージ</p>
 <br>
 <h4 id="github-%E3%81%AB%E5%85%AC%E9%96%8B%E9%8D%B5%E3%81%AE%E7%99%BB%E9%8C%B2">GitHub に公開鍵の登録</h4>
 <p>id_ed25519.pub の中身（テキストファイルです）を</p>
@@ -714,7 +727,7 @@ python -m venv .venv
 <h1 id="%EF%BC%97-%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%82%92%E4%BD%9C%E3%82%8B--%EF%BC%91%E5%88%86">７. プロジェクトフォルダを作る- （１分）</h1>
 <pre class="hljs"><code><div>mkdir BANDNAME　　←読み替えてね
 </div></code></pre>
-<p>既にフォルダが存在している場合は、別のプロジェクト名としてください。　BANDNAME-DB  とか</p>
+<p>既にフォルダが存在している場合は、別のプロジェクト名としてください。　BANDNAME-DB とか SITEDATA とか。わかればいいレベル。</p>
 <p>このフォルダに <strong>配布した ZIP ファイル</strong> を展開します。</p>
 <pre class="hljs"><code><div>BANDNAME　　←読み替えてね
   │  .gitattributes　　（macOSでは見えないかも）
@@ -865,7 +878,7 @@ python event_editor_tk.py
 <h2 id="3-1-%E6%9B%B4%E6%96%B0%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E5%87%BA%E5%8A%9B">3-1. 更新データの出力</h2>
 <p><strong>Publish JSON</strong> をクリックすると更新データが出力されます</p>
 <h2 id="3-2-%E6%9B%B4%E6%96%B0%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E7%A2%BA%E8%AA%8D">3-2. 更新データの確認</h2>
-<p><strong>Web参照</strong> をクリックするとブラウザが起動して更新を確認することが出来ます</p>
+<p><strong>Web参照</strong> をクリックするとブラウザが起動して更新を事前に確認することが出来ます</p>
 <p><br><br></p>
 <h1 id="%EF%BC%94-%E6%9B%B4%E6%96%B0%E3%81%97%E3%81%9F%E3%83%87%E3%83%BC%E3%82%BF%E3%82%92%E3%82%A2%E3%83%83%E3%83%97%E3%83%AD%E3%83%BC%E3%83%89push%E3%81%99%E3%82%8B">４. 更新したデータをアップロード（push）する</h1>
 <p>入力　⇒　更新　⇒　<strong>アップロード</strong></p>
@@ -890,7 +903,7 @@ python event_editor_tk.py
 <pre class="hljs"><code><div>https://〇〇〇〇.github.io/BANDNAME/site/　　←読み替えてね
 </div></code></pre>
 <p>にアクセスすることで表示されると思います。</p>
-<p>このままでは Gitユーザー名「〇〇〇〇」や、プロジェクト名「BANDNAME」がバッチリ出ちゃってて正直気持ち悪いので、一般公開（URLアナウンス）する前に第３章も読んでね。</p>
+<p>このままでは Gitユーザー名「〇〇〇〇」や、プロジェクト名「BANDNAME」がバッチリ出ちゃってて正直気持ち悪いので、一般公開（URLアナウンス）する前に第３章も読んで検討してね。</p>
 <p><br><br>
 <br><br>
 <br><br>
@@ -945,6 +958,8 @@ python event_editor_tk.py
 <p>こんな感じの URL が表示されるかと。</p>
 <p><br><br></p>
 <h1 id="%EF%BC%93-github-%E3%82%92-private-%E3%81%AB%E3%81%99%E3%82%8B">３. GitHub を Private にする</h1>
+<p>Cloudflare からアクセス可能になると、GitHub Pages を公開（Public）しておく必要は無いので、非公開（Private）に変更します。</p>
+<br>
 <ol>
 <li><a href="https://github.com/">https://github.com/</a>　にアクセスします</li>
 <li>左メニュー「Top repositories」にあるリポジトリ「BANDNAME」をクリックします　　←読み替えてね</li>
