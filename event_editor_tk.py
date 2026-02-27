@@ -2092,8 +2092,46 @@ class App(ttk.Frame):
     #     self.load_band()
     #     self.status.set("対バン削除")
 
-    def del_band():
-        sel = tree_band.focus()
+    # def del_band(self):
+    #     sel = self.band_tv.focus()
+    #     if not sel:
+    #         return
+
+    #     seq = int(sel)
+
+    #     if not messagebox.askyesno("確認", "このバンドを削除しますか？"):
+    #         return
+
+    #     with tx():
+    #         # 対象削除
+    #         exec1(
+    #             "DELETE FROM bandsevent WHERE event_id=? AND seq=?",
+    #             (self.event_id, seq)
+    #         )
+
+    #         # seqを負数へ一時退避（←事故防止テク 👑）
+    #         exec1(
+    #             "UPDATE bandsevent SET seq = -seq WHERE event_id=?",
+    #             (self.event_id,)
+    #         )
+
+    #         # 正しい順番で再採番
+    #         rows = qall(
+    #             "SELECT seq FROM bandsevent WHERE event_id=? ORDER BY seq DESC",
+    #             (self.event_id,)
+    #         )
+
+    #         for new_seq, (old_seq,) in enumerate(rows, start=1):
+    #             exec1(
+    #                 "UPDATE bandsevent SET seq=? WHERE event_id=? AND seq=?",
+    #                 (new_seq, self.event_id, old_seq)
+    #             )
+
+    #     self.load_band()
+
+
+    def del_band(self):
+        sel = self.band_tv.focus()
         if not sel:
             return
 
@@ -2102,32 +2140,43 @@ class App(ttk.Frame):
         if not messagebox.askyesno("確認", "このバンドを削除しますか？"):
             return
 
-        with tx():
+        with db_conn() as con:
+            cur = con.cursor()
+            cur.execute("BEGIN IMMEDIATE")
+
             # 対象削除
-            exec1(
+            cur.execute(
                 "DELETE FROM bandsevent WHERE event_id=? AND seq=?",
-                (current_event_id, seq)
+                (self.event_id, seq)
             )
 
-            # seqを負数へ一時退避（←事故防止テク 👑）
-            exec1(
+            # seq を一旦マイナスへ退避
+            cur.execute(
                 "UPDATE bandsevent SET seq = -seq WHERE event_id=?",
-                (current_event_id,)
+                (self.event_id,)
             )
 
-            # 正しい順番で再採番
-            rows = qall(
+            # 再採番
+            rows = cur.execute(
                 "SELECT seq FROM bandsevent WHERE event_id=? ORDER BY seq DESC",
-                (current_event_id,)
-            )
+                (self.event_id,)
+            ).fetchall()
 
-            for new_seq, (old_seq,) in enumerate(rows, start=1):
-                exec1(
+            for new_seq, row in enumerate(rows, start=1):
+                old_seq = row[0]
+                cur.execute(
                     "UPDATE bandsevent SET seq=? WHERE event_id=? AND seq=?",
-                    (new_seq, current_event_id, old_seq)
+                    (new_seq, self.event_id, old_seq)
                 )
 
-        load_band()
+            con.commit()
+
+        self.load_band()
+        self.status.set("対バン削除")
+
+
+
+
 
     def move_band(self, direction):
         sel = self.band_tv.selection()

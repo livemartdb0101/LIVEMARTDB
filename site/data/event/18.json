@@ -24,41 +24,36 @@
     },
     {
       "seq": 3,
-      "name": "ディアブルボア",
-      "act_id": 68
-    },
-    {
-      "seq": 4,
       "name": "QUEEN RABBIT",
       "act_id": 1
     },
     {
-      "seq": 5,
+      "seq": 4,
       "name": "Empress",
       "act_id": 22
     },
     {
-      "seq": 6,
+      "seq": 5,
       "name": "DARRELL",
       "act_id": 20
     },
     {
-      "seq": 7,
+      "seq": 6,
       "name": "Magistina Saga",
       "act_id": 76
     },
     {
-      "seq": 8,
+      "seq": 7,
       "name": "FullMooN",
       "act_id": 21
     },
     {
-      "seq": 9,
+      "seq": 8,
       "name": "革命メロイック",
       "act_id": 73
     },
     {
-      "seq": 10,
+      "seq": 9,
       "name": "はるちょん",
       "act_id": 77
     }

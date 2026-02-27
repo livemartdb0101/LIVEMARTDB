@@ -432,41 +432,36 @@
   {
     "event_id": 18,
     "seq": 3,
-    "act_id": 68
-  },
-  {
-    "event_id": 18,
-    "seq": 4,
     "act_id": 1
   },
   {
     "event_id": 18,
-    "seq": 5,
+    "seq": 4,
     "act_id": 22
   },
   {
     "event_id": 18,
-    "seq": 6,
+    "seq": 5,
     "act_id": 20
   },
   {
     "event_id": 18,
-    "seq": 7,
+    "seq": 6,
     "act_id": 76
   },
   {
     "event_id": 18,
-    "seq": 8,
+    "seq": 7,
     "act_id": 21
   },
   {
     "event_id": 18,
-    "seq": 9,
+    "seq": 8,
     "act_id": 73
   },
   {
     "event_id": 18,
-    "seq": 10,
+    "seq": 9,
     "act_id": 77
   },
   {
@@ -722,31 +717,26 @@
   {
     "event_id": 26,
     "seq": 6,
-    "act_id": 20
-  },
-  {
-    "event_id": 26,
-    "seq": 7,
     "act_id": 22
   },
   {
     "event_id": 26,
-    "seq": 8,
+    "seq": 7,
     "act_id": 77
   },
   {
     "event_id": 26,
-    "seq": 9,
+    "seq": 8,
     "act_id": 78
   },
   {
     "event_id": 26,
-    "seq": 10,
+    "seq": 9,
     "act_id": 43
   },
   {
     "event_id": 26,
-    "seq": 11,
+    "seq": 10,
     "act_id": 21
   }
 ]

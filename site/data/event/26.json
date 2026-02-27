@@ -39,31 +39,26 @@
     },
     {
       "seq": 6,
-      "name": "DARRELL",
-      "act_id": 20
-    },
-    {
-      "seq": 7,
       "name": "Empress",
       "act_id": 22
     },
     {
-      "seq": 8,
+      "seq": 7,
       "name": "はるちょん",
       "act_id": 77
     },
     {
-      "seq": 9,
+      "seq": 8,
       "name": "Anatomy",
       "act_id": 78
     },
     {
-      "seq": 10,
+      "seq": 9,
       "name": "Risky Melody",
       "act_id": 43
     },
     {
-      "seq": 11,
+      "seq": 10,
       "name": "FullMooN",
       "act_id": 21
     }
