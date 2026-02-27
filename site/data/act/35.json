@@ -10,6 +10,20 @@
   "tiktok": "",
   "events": [
     {
+      "event_id": 25,
+      "date": "2024-03-19",
+      "title": "QUEEN RABBT 始動",
+      "form": "",
+      "seq": 4
+    },
+    {
+      "event_id": 24,
+      "date": "2024-05-30",
+      "title": "黒聖女の狂宴",
+      "form": "",
+      "seq": 7
+    },
+    {
       "event_id": 7,
       "date": "2025-09-14",
       "title": "CrazyFest EXTRA-17",

@@ -64,7 +64,7 @@
       async function collectGalleryImages(id) {
         const base = 'image';               // 今の構造に合わせてある
         const list = [];
-        for (let i = 1; i <= 5; i++) {     // 50枚まで連番チェック
+        for (let i = 1; i <= 25; i++) {     // 50枚まで連番チェック
           const path = `${base}/people_${id}_${i}.webp`;
           try {
             const r = await fetch(path, { method: 'HEAD' });
@@ -252,7 +252,7 @@
     <a id="reportLink" target="_blank">このページの誤りを報告</a>
   </div>
 
-  <script src="../googleform.js"></script>
+  <script src="settings.js"></script>
   <script>
   // Google Form の URL を生成（現在のページURLを自動付与）
   const formURL =

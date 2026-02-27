@@ -10,6 +10,13 @@
   "tiktok": "",
   "events": [
     {
+      "event_id": 26,
+      "date": "2025-02-09",
+      "title": "CrazyFest EXTRA-15Vt.SP",
+      "form": "",
+      "seq": 10
+    },
+    {
       "event_id": 3,
       "date": "2025-05-06",
       "title": "CrazyFest",

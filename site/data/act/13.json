@@ -10,6 +10,20 @@
   "tiktok": "",
   "events": [
     {
+      "event_id": 21,
+      "date": "2024-06-25",
+      "title": "SENA BIRTHDAY 前夜祭 3MAN!!",
+      "form": "",
+      "seq": 3
+    },
+    {
+      "event_id": 17,
+      "date": "2024-12-27",
+      "title": "[8th EP] Release Party!!",
+      "form": "",
+      "seq": 3
+    },
+    {
       "event_id": 4,
       "date": "2025-06-26",
       "title": "On the day of my birthday",

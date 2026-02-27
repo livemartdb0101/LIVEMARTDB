@@ -3,6 +3,17 @@
   "title": "Sence of Freedom",
   "events": [
     {
+      "event_id": 16,
+      "date": "2025-03-10",
+      "title": "Sproject×QUEEN RABBIT 2MAN SHOW",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
+      "form": "",
+      "seq": 4,
+      "section": null,
+      "version": ""
+    },
+    {
       "event_id": 3,
       "date": "2025-05-06",
       "title": "CrazyFest",

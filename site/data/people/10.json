@@ -1,0 +1,51 @@
+{
+  "id": 10,
+  "name": "ヒロ店長",
+  "events": [
+    {
+      "event_id": 23,
+      "date": "2024-10-10",
+      "title": "渋谷女子会〜バンド天国",
+      "venue": "初台DOORS",
+      "venue_id": 14,
+      "form": null,
+      "role": "Guitar"
+    },
+    {
+      "event_id": 20,
+      "date": "2024-11-09",
+      "title": "CrazyFest Vol.245",
+      "venue": "巣鴨獅子王",
+      "venue_id": 7,
+      "form": null,
+      "role": "Guitar"
+    },
+    {
+      "event_id": 19,
+      "date": "2024-11-23",
+      "title": "超爆裂緑道2024〜翡翠の風神〜",
+      "venue": "上野音横丁",
+      "venue_id": 13,
+      "form": null,
+      "role": "Guitar"
+    },
+    {
+      "event_id": 17,
+      "date": "2024-12-27",
+      "title": "[8th EP] Release Party!!",
+      "venue": "秋葉原CLUB GOODMAN",
+      "venue_id": 5,
+      "form": null,
+      "role": "Guitar"
+    }
+  ],
+  "birthday": "",
+  "joined_on": "",
+  "left_on": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": ""
+}

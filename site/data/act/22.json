@@ -10,6 +10,27 @@
   "tiktok": "",
   "events": [
     {
+      "event_id": 19,
+      "date": "2024-11-23",
+      "title": "超爆裂緑道2024〜翡翠の風神〜",
+      "form": "",
+      "seq": 2
+    },
+    {
+      "event_id": 18,
+      "date": "2025-01-25",
+      "title": "CrazyFest Vol.252",
+      "form": "",
+      "seq": 5
+    },
+    {
+      "event_id": 26,
+      "date": "2025-02-09",
+      "title": "CrazyFest EXTRA-15Vt.SP",
+      "form": "",
+      "seq": 7
+    },
+    {
       "event_id": 3,
       "date": "2025-05-06",
       "title": "CrazyFest",

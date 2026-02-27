@@ -1,0 +1,27 @@
+{
+  "id": 66,
+  "name": "浮迷夜",
+  "url": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "events": [
+    {
+      "event_id": 20,
+      "date": "2024-11-09",
+      "title": "CrazyFest Vol.245",
+      "form": "",
+      "seq": 8
+    },
+    {
+      "event_id": 19,
+      "date": "2024-11-23",
+      "title": "超爆裂緑道2024〜翡翠の風神〜",
+      "form": "",
+      "seq": 4
+    }
+  ]
+}

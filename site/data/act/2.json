@@ -10,6 +10,27 @@
   "tiktok": "",
   "events": [
     {
+      "event_id": 21,
+      "date": "2024-06-25",
+      "title": "SENA BIRTHDAY 前夜祭 3MAN!!",
+      "form": "",
+      "seq": 4
+    },
+    {
+      "event_id": 17,
+      "date": "2024-12-27",
+      "title": "[8th EP] Release Party!!",
+      "form": "",
+      "seq": 5
+    },
+    {
+      "event_id": 16,
+      "date": "2025-03-10",
+      "title": "Sproject×QUEEN RABBIT 2MAN SHOW",
+      "form": "",
+      "seq": 2
+    },
+    {
       "event_id": 4,
       "date": "2025-06-26",
       "title": "On the day of my birthday",

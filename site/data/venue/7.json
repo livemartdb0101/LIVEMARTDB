@@ -4,6 +4,12 @@
   "url": "https://sugamo-cco.com/",
   "events": [
     {
+      "id": 20,
+      "date": "2024-11-09",
+      "title": "CrazyFest Vol.245",
+      "form": ""
+    },
+    {
       "id": 3,
       "date": "2025-05-06",
       "title": "CrazyFest",

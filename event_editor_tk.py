@@ -27,17 +27,17 @@ EXPORT_PY = os.path.join(ROOT_DIR, "export_json.py")
 
 ERROR_LOG_PATH = os.path.join(BASE_DIR, "error.log")
 
-def _log_error(msg: str, exc: Exception | None = None):
-    """エラー時のみ error.log に追記。普段はログを出さない方針。"""
-    try:
-        with open(ERROR_LOG_PATH, "a", encoding="utf-8") as f:
-            ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            f.write(f"[{ts}] {msg}\n")
-            if exc:
-                f.write(f"  {type(exc).__name__}: {exc}\n")
-    except Exception:
-        # ログ書き込みでさらに失敗しても黙殺（ユーザー体験優先）
-        pass
+# def _log_error(msg: str, exc: Exception | None = None):
+#     """エラー時のみ error.log に追記。普段はログを出さない方針。"""
+#     try:
+#         with open(ERROR_LOG_PATH, "a", encoding="utf-8") as f:
+#             ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#             f.write(f"[{ts}] {msg}\n")
+#             if exc:
+#                 f.write(f"  {type(exc).__name__}: {exc}\n")
+#     except Exception:
+#         # ログ書き込みでさらに失敗しても黙殺（ユーザー体験優先）
+#         pass
 
 def _exec_script(con: sqlite3.Connection, sql: str):
     cur = con.cursor()
@@ -309,7 +309,7 @@ def ensure_db():
                 _ensure_minimum_objects(con)
 
     except Exception as e:
-        _log_error("DB初期化/整合性チェック中にエラーが発生しました。", e)
+        # _log_error("DB初期化/整合性チェック中にエラーが発生しました。", e)
         # 必要最小限の通知（GUI前なので messagebox ではなく print でもOK）
         print("Error: データベースの初期化に失敗しました。error.log を確認してください。", file=sys.stderr)
         # ここで再スローしても良いが、起動継続させない方が安全
@@ -336,11 +336,21 @@ def qone(sql, args=()):
     rows = qall(sql, args)
     return rows[0] if rows else None
 
+# def exec1(sql, args=()):
+#     with db_conn() as con:
+#         cur = con.cursor()
+#         cur.execute(sql, args)
+#         con.commit()
+
 def exec1(sql, args=()):
-    with db_conn() as con:
-        cur = con.cursor()
-        cur.execute(sql, args)
+    with sqlite3.connect(DB_PATH) as con:
+        cur = con.execute(sql, args)
         con.commit()
+
+        if sql.strip().upper().startswith(("UPDATE", "DELETE")):
+            if cur.rowcount == 0:
+                raise RuntimeError(f"更新失敗検知: {sql}")
+
 
 def resequence(event_id: int):
     rows = qall("SELECT seq FROM setlist WHERE event_id=? ORDER BY seq", (event_id,))
@@ -654,35 +664,62 @@ class App(ttk.Frame):
 
 
         # # セトリ
-        # --- ここから：セトリ UI（正しい順序） ---
+        # # --- ここから：セトリ UI（正しい順序） ---
+        # sf = ttk.LabelFrame(right, text="セトリ編集（seqは常に1..N）")
+        # sf.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
+
+        # # 1) Treeview を“先に”作る
+        # self.setlist_tv = ttk.Treeview(
+        #     sf, columns=("seq","title","section","version"),
+        #     show="headings", height=4
+        # )
+        # self.setlist_tv.heading("seq",     text="#")
+        # self.setlist_tv.heading("title",   text="曲名")
+        # self.setlist_tv.heading("section", text="セクション")
+        # self.setlist_tv.heading("version", text="バージョン")
+        # self.setlist_tv.column("seq",     width=10,  anchor="w")
+        # self.setlist_tv.column("title",   width=150, anchor="w")
+        # self.setlist_tv.column("section", width=50, anchor="w")
+        # self.setlist_tv.column("version", width=50, anchor="w")
+
+        # # 2) それから pack とバインド
+        # self.setlist_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=2)
+        # self.setlist_tv.bind("<<TreeviewSelect>>", self.on_setlist_select)
+        # self.setlist_tv.bind("<Double-1>", self.on_setlist_dblclick)  # ダブルクリックで演奏詳細を開く
+        # # --- ここまで ---
+
+        # self.setlist_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=2)
+        # for col, text, w in [("seq","#",60),("title","曲名",280),("section","セクション",120),("version","バージョン",160)]:
+        #     self.setlist_tv.heading(col, text=text)
+        #     self.setlist_tv.column(col, width=w, anchor="w")
+        # self.setlist_tv.bind("<<TreeviewSelect>>", self.on_setlist_select)
+
+        # --- セトリ UI ---
         sf = ttk.LabelFrame(right, text="セトリ編集（seqは常に1..N）")
         sf.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
 
-        # 1) Treeview を“先に”作る
+        # 1) Treeview 作成（器を作る）
         self.setlist_tv = ttk.Treeview(
             sf, columns=("seq","title","section","version"),
             show="headings", height=4
         )
-        self.setlist_tv.heading("seq",     text="#")
-        self.setlist_tv.heading("title",   text="曲名")
-        self.setlist_tv.heading("section", text="セクション")
-        self.setlist_tv.heading("version", text="バージョン")
-        self.setlist_tv.column("seq",     width=10,  anchor="w")
-        self.setlist_tv.column("title",   width=150, anchor="w")
-        self.setlist_tv.column("section", width=50, anchor="w")
-        self.setlist_tv.column("version", width=50, anchor="w")
 
-        # 2) それから pack とバインド
-        self.setlist_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=2)
-        self.setlist_tv.bind("<<TreeviewSelect>>", self.on_setlist_select)
-        self.setlist_tv.bind("<Double-1>", self.on_setlist_dblclick)  # ダブルクリックで演奏詳細を開く
-        # --- ここまで ---
-
-        self.setlist_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=2)
-        for col, text, w in [("seq","#",60),("title","曲名",280),("section","セクション",120),("version","バージョン",160)]:
+        # 2) 見た目の設定（★反映されていた「下の方」の数値を採用★）
+        columns_info = [
+            ("seq", "#", 60),
+            ("title", "曲名", 280),
+            ("section", "セクション", 120),
+            ("version", "バージョン", 160)
+        ]
+        for col, text, w in columns_info:
             self.setlist_tv.heading(col, text=text)
             self.setlist_tv.column(col, width=w, anchor="w")
+
+        # 3) 画面への配置と動作の設定
+        self.setlist_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=2)
         self.setlist_tv.bind("<<TreeviewSelect>>", self.on_setlist_select)
+        self.setlist_tv.bind("<Double-1>", self.on_setlist_dblclick)
+
 
         # 追加・編集 UI
         add_fr = ttk.Frame(sf); add_fr.pack(fill=tk.X, padx=6, pady=(0,6))
@@ -713,15 +750,6 @@ class App(ttk.Frame):
     # ----- イベント一覧 -----
     def refresh_events(self):
         q = (self.q_var.get() or "").strip()
-
-        # if q:
-        #     rows = qall("""
-        #         SELECT e.id, e.date, e.title, v.name AS venue, e.form
-        #         FROM events e
-        #         LEFT JOIN venues v ON v.id = e.venue_id
-        #         WHERE e.title LIKE ? OR e.date LIKE ?
-        #         ORDER BY e.date DESC, e.id DESC
-        #     """, (f"%{q}%", f"%{q}%"))
 
         if q:
             rows = qall("""
@@ -1571,7 +1599,38 @@ class App(ttk.Frame):
 
         tv.bind("<<TreeviewSelect>>", on_perf_select)
 
-        # 追加
+        # # 追加
+        # def add_perf():
+        #     name = (mem_cb.get() or "").strip()
+        #     role = (role_cb.get() or "").strip()
+
+        #     if not name or name not in self.people_name_to_id:
+        #         messagebox.showwarning("入力不足", "メンバーをプルダウンから選んでください")
+        #         return
+        #     if not role:
+        #         messagebox.showwarning("入力不足", "役割を選択してください")
+        #         return
+
+        #     mid = self.people_name_to_id[name]
+
+        #     # ord の末尾を取得
+        #     row = qone("""
+        #         SELECT COALESCE(MAX(ord),0) AS mx
+        #         FROM performer
+        #         WHERE event_id=? AND seq=?
+        #     """, (self.event_id, seq))
+        #     new_ord = (row["mx"] if row else 0) + 1
+
+        #     exec1("""
+        #         INSERT OR REPLACE INTO performer(event_id, seq, member_id, role, ord)
+        #         VALUES (?, ?, ?, ?, ?)
+        #     """, (self.event_id, seq, mid, role, new_ord))
+
+        #     load_performers()
+
+
+
+        # --- NEW add_perf() 安定版 ---------------------------
         def add_perf():
             name = (mem_cb.get() or "").strip()
             role = (role_cb.get() or "").strip()
@@ -1585,7 +1644,6 @@ class App(ttk.Frame):
 
             mid = self.people_name_to_id[name]
 
-            # ord の末尾を取得
             row = qone("""
                 SELECT COALESCE(MAX(ord),0) AS mx
                 FROM performer
@@ -1594,11 +1652,23 @@ class App(ttk.Frame):
             new_ord = (row["mx"] if row else 0) + 1
 
             exec1("""
-                INSERT OR REPLACE INTO performer(event_id, seq, member_id, role, ord)
+                INSERT OR IGNORE INTO performer(event_id, seq, member_id, role, ord)
                 VALUES (?, ?, ?, ?, ?)
             """, (self.event_id, seq, mid, role, new_ord))
 
+            exec1("""
+                UPDATE performer
+                SET ord=?
+                WHERE event_id=? AND seq=? AND member_id=? AND role=?
+            """, (new_ord, self.event_id, seq, mid, role))
+
             load_performers()
+        # -----------------------------------------------------
+
+
+
+
+
 
         # 更新
         def update_perf():
@@ -1645,7 +1715,61 @@ class App(ttk.Frame):
 
             load_performers()
 
-        # 並べ替え
+        # # 並べ替え
+        # def move_perf(direction):
+        #     sel = tv.selection()
+        #     if not sel:
+        #         messagebox.showinfo("並べ替え", "行を選択してください")
+        #         return
+
+        #     iid = sel[0]
+        #     try:
+        #         mid_str, role = iid.split("::", 1)
+        #         mid = int(mid_str)
+        #     except:
+        #         return
+
+        #     rows = qall("""
+        #         SELECT p.id AS member_id, sl.role, COALESCE(sl.ord,999999) AS ord
+        #         FROM performer sl
+        #         JOIN people p ON p.id=sl.member_id
+        #         WHERE sl.event_id=? AND sl.seq=?
+        #         ORDER BY sl.ord, p.id
+        #     """, (self.event_id, seq))
+
+        #     idx = next((i for i, r in enumerate(rows)
+        #                 if r["member_id"] == mid and r["role"] == role), None)
+        #     if idx is None:
+        #         return
+
+        #     if direction == "up":
+        #         if idx == 0:
+        #             return
+        #         swap_idx = idx - 1
+        #     else:
+        #         if idx == len(rows) - 1:
+        #             return
+        #         swap_idx = idx + 1
+
+        #     a = rows[idx]
+        #     b = rows[swap_idx]
+
+        #     exec1("""
+        #         UPDATE performer SET ord=?
+        #         WHERE event_id=? AND seq=? AND member_id=? AND role=?
+        #     """, (b["ord"], self.event_id, seq, a["member_id"], a["role"]))
+
+        #     exec1("""
+        #         UPDATE performer SET ord=?
+        #         WHERE event_id=? AND seq=? AND member_id=? AND role=?
+        #     """, (a["ord"], self.event_id, seq, b["member_id"], b["role"]))
+
+        #     load_performers()
+        #     tv.selection_set(iid)
+        #     tv.see(iid)
+
+
+        # --- NEW move_perf() 安定版 --------------------------
         def move_perf(direction):
             sel = tv.selection()
             if not sel:
@@ -1684,19 +1808,28 @@ class App(ttk.Frame):
             a = rows[idx]
             b = rows[swap_idx]
 
+            # ★ 一時退避を使う安全swap
             exec1("""
-                UPDATE performer SET ord=?
+                UPDATE performer SET ord=-1
                 WHERE event_id=? AND seq=? AND member_id=? AND role=?
-            """, (b["ord"], self.event_id, seq, a["member_id"], a["role"]))
+            """, (self.event_id, seq, a["member_id"], a["role"]))
 
             exec1("""
                 UPDATE performer SET ord=?
                 WHERE event_id=? AND seq=? AND member_id=? AND role=?
             """, (a["ord"], self.event_id, seq, b["member_id"], b["role"]))
 
+            exec1("""
+                UPDATE performer SET ord=?
+                WHERE event_id=? AND seq=? AND member_id=? AND role=?
+            """, (b["ord"], self.event_id, seq, a["member_id"], a["role"]))
+
             load_performers()
             tv.selection_set(iid)
             tv.see(iid)
+        # -----------------------------------------------------
+
+
 
         # lineup → performer へ適用
         def apply_lineup_to_seq():
@@ -1942,22 +2075,59 @@ class App(ttk.Frame):
         self.status.set(f"対バン追加: {act_name}")
 
 
-    def del_band(self):
-        sel = self.band_tv.selection()
+    # def del_band(self):
+    #     sel = self.band_tv.selection()
+    #     if not sel:
+    #         messagebox.showinfo("削除", "対バンを選択してください")
+    #         return
+    #     seq = int(sel[0])
+
+    #     exec1("DELETE FROM bandsevent WHERE event_id=? AND seq=?", (self.event_id, seq))
+
+    #     # seq を詰める
+    #     rows = qall("SELECT seq FROM bandsevent WHERE event_id=? ORDER BY seq", (self.event_id,))
+    #     for i, r in enumerate(rows, start=1):
+    #         exec1("UPDATE bandsevent SET seq=? WHERE event_id=? AND seq=?", (i, self.event_id, r["seq"]))
+
+    #     self.load_band()
+    #     self.status.set("対バン削除")
+
+    def del_band():
+        sel = tree_band.focus()
         if not sel:
-            messagebox.showinfo("削除", "対バンを選択してください")
             return
-        seq = int(sel[0])
 
-        exec1("DELETE FROM bandsevent WHERE event_id=? AND seq=?", (self.event_id, seq))
+        seq = int(sel)
 
-        # seq を詰める
-        rows = qall("SELECT seq FROM bandsevent WHERE event_id=? ORDER BY seq", (self.event_id,))
-        for i, r in enumerate(rows, start=1):
-            exec1("UPDATE bandsevent SET seq=? WHERE event_id=? AND seq=?", (i, self.event_id, r["seq"]))
+        if not messagebox.askyesno("確認", "このバンドを削除しますか？"):
+            return
 
-        self.load_band()
-        self.status.set("対バン削除")
+        with tx():
+            # 対象削除
+            exec1(
+                "DELETE FROM bandsevent WHERE event_id=? AND seq=?",
+                (current_event_id, seq)
+            )
+
+            # seqを負数へ一時退避（←事故防止テク 👑）
+            exec1(
+                "UPDATE bandsevent SET seq = -seq WHERE event_id=?",
+                (current_event_id,)
+            )
+
+            # 正しい順番で再採番
+            rows = qall(
+                "SELECT seq FROM bandsevent WHERE event_id=? ORDER BY seq DESC",
+                (current_event_id,)
+            )
+
+            for new_seq, (old_seq,) in enumerate(rows, start=1):
+                exec1(
+                    "UPDATE bandsevent SET seq=? WHERE event_id=? AND seq=?",
+                    (new_seq, current_event_id, old_seq)
+                )
+
+        load_band()
 
     def move_band(self, direction):
         sel = self.band_tv.selection()
@@ -2050,6 +2220,9 @@ class MasterEditor(ttk.Frame):
         # 左：検索＋一覧、右：入力フォーム
         self.columnconfigure(0, weight=3)
         self.columnconfigure(1, weight=2)
+
+        self.columnconfigure(1, weight=1)  
+
         self.rowconfigure(1, weight=1)
 
         # 検索
@@ -2086,46 +2259,101 @@ class MasterEditor(ttk.Frame):
         self.tv.configure(yscroll=ysb.set)
         ysb.grid(row=1, column=0, sticky="nse", padx=(0,6), pady=2)
 
+        # # 入力フォーム
+        # form = ttk.Frame(self)
+        # form.grid(row=1, column=1, sticky="nsew", padx=(3,6), pady=2)
+        # form.columnconfigure(1, weight=1)
+
+        # self.var_pk = tk.StringVar()
+        # ttk.Label(form, text=f"{self.pk} (auto)").grid(row=0, column=0, sticky="w")
+        # ttk.Entry(form, textvariable=self.var_pk, state="readonly", width=6).grid(row=0, column=1, sticky="w", pady=2)
+
+        # self.entries = {}
+        # # ★ 画像参照保持（PhotoImage の GC 対策）
+        # self._img_ref = None
+
+        # for i, f in enumerate(self.fields, start=1):
+        #     ttk.Label(form, text=f.get("label", f["name"])).grid(row=i, column=0, sticky="w")
+        #     width = f.get("width", 30)
+
+        #     # ★ 追加：preview 行だけは Label を置く（編集不可の表示領域）
+        #     if f.get("name") == "preview":
+        #         lbl = ttk.Label(form, text="No image")
+        #         lbl.grid(row=i, column=1, sticky="w", pady=2)
+        #         # entries には他と同じ辞書キーで「Label」を入れておく（後で参照するため）
+        #         self.entries[f["name"]] = lbl
+        #         continue
+
+        #     if f.get("multiline"):
+        #         txt = tk.Text(form, height=f.get("height", 4))
+        #         txt.grid(row=i, column=1, sticky="nsew", pady=2)
+        #         form.rowconfigure(i, weight=1)
+        #         self.entries[f["name"]] = txt
+        #     else:
+        #         v = tk.StringVar()
+        #         ent = ttk.Entry(form, textvariable=v, width=width)
+        #         ent.grid(row=i, column=1, sticky="ew", pady=2)
+        #         self.entries[f["name"]] = v
+
         # 入力フォーム
         form = ttk.Frame(self)
         form.grid(row=1, column=1, sticky="nsew", padx=(3,6), pady=2)
-        form.columnconfigure(1, weight=1)
+
+        form.rowconfigure(0, weight=1)     # 👈 これ超重要
+        form.columnconfigure(0, weight=1)  # 👈 これもセット
+
+
+        # 👇 追加：フォーム本体（伸びる領域）
+        form_body = ttk.Frame(form)
+        form_body.grid(row=0, column=0, sticky="nsew")
+        form_body.columnconfigure(1, weight=1)
 
         self.var_pk = tk.StringVar()
-        ttk.Label(form, text=f"{self.pk} (auto)").grid(row=0, column=0, sticky="w")
-        ttk.Entry(form, textvariable=self.var_pk, state="readonly", width=6).grid(row=0, column=1, sticky="w", pady=2)
+        ttk.Label(form_body, text=f"{self.pk} (auto)").grid(row=0, column=0, sticky="w")
+        ttk.Entry(form_body, textvariable=self.var_pk, state="readonly", width=6).grid(row=0, column=1, sticky="w", pady=2)
 
         self.entries = {}
-        # ★ 画像参照保持（PhotoImage の GC 対策）
-        self._img_ref = None
+        self._img_ref = None  # PhotoImage GC対策
 
         for i, f in enumerate(self.fields, start=1):
-            ttk.Label(form, text=f.get("label", f["name"])).grid(row=i, column=0, sticky="w")
+            ttk.Label(form_body, text=f.get("label", f["name"])).grid(row=i, column=0, sticky="w")
             width = f.get("width", 30)
 
-            # ★ 追加：preview 行だけは Label を置く（編集不可の表示領域）
             if f.get("name") == "preview":
-                lbl = ttk.Label(form, text="No image")
+                lbl = ttk.Label(form_body, text="No image")
                 lbl.grid(row=i, column=1, sticky="w", pady=2)
-                # entries には他と同じ辞書キーで「Label」を入れておく（後で参照するため）
                 self.entries[f["name"]] = lbl
                 continue
 
             if f.get("multiline"):
-                txt = tk.Text(form, height=f.get("height", 4))
+                txt = tk.Text(form_body, height=f.get("height", 4))
                 txt.grid(row=i, column=1, sticky="nsew", pady=2)
-                form.rowconfigure(i, weight=1)
+                form_body.rowconfigure(i, weight=1)
                 self.entries[f["name"]] = txt
             else:
                 v = tk.StringVar()
-                ent = ttk.Entry(form, textvariable=v, width=width)
+                ent = ttk.Entry(form_body, textvariable=v, width=width)
                 ent.grid(row=i, column=1, sticky="ew", pady=2)
                 self.entries[f["name"]] = v
 
 
-        # ボタン
+
+        # # ボタン
+        # btnf = ttk.Frame(form)
+        # btnf.grid(row=len(self.fields)+1, column=0, columnspan=2, sticky="ew", pady=(8,0))
+        # ttk.Button(btnf, text="New", command=self.clear).pack(side="left", padx=4)
+        # ttk.Button(btnf, text="Save", command=self.save).pack(side="left", padx=4)
+        # ttk.Button(btnf, text="Delete", command=self.delete).pack(side="left", padx=4)
+
+        # # ---- フォーム（入力エリア）
+        # form_body = ttk.Frame(form)
+        # form_body.grid(row=0, column=0, sticky="nsew")
+        # form_body.columnconfigure(1, weight=1)
+
+        # ---- ボタン固定エリア
         btnf = ttk.Frame(form)
-        btnf.grid(row=len(self.fields)+1, column=0, columnspan=2, sticky="ew", pady=(8,0))
+        btnf.grid(row=999, column=0, sticky="ew", pady=(8,0))
+
         ttk.Button(btnf, text="New", command=self.clear).pack(side="left", padx=4)
         ttk.Button(btnf, text="Save", command=self.save).pack(side="left", padx=4)
         ttk.Button(btnf, text="Delete", command=self.delete).pack(side="left", padx=4)

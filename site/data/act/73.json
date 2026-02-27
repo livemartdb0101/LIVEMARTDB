@@ -1,0 +1,27 @@
+{
+  "id": 73,
+  "name": "革命メロイック",
+  "url": "",
+  "x": "",
+  "instagram": "",
+  "threads": "",
+  "facebook": "",
+  "youtube": "",
+  "tiktok": "",
+  "events": [
+    {
+      "event_id": 20,
+      "date": "2024-11-09",
+      "title": "CrazyFest Vol.245",
+      "form": "",
+      "seq": 6
+    },
+    {
+      "event_id": 18,
+      "date": "2025-01-25",
+      "title": "CrazyFest Vol.252",
+      "form": "",
+      "seq": 9
+    }
+  ]
+}

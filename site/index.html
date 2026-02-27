@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <title>LIVEMART SEARCH</title>
+  <title>TEST SEARCH</title>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 20px; }
     input { width: 320px; padding: 8px 10px; font-size: 16px; }
@@ -15,7 +15,7 @@
     mark { background: #ffee6e; padding: 0 2px; border-radius: 2px; }
     .readme-link {
       position: absolute;
-      top: 20px;
+      top: 50px;
       right: 20px;
       font-weight: bold;
       color: #0b57d0;
@@ -24,11 +24,23 @@
     .readme-link:hover {
       text-decoration: underline;
     }
+
+    .toplinks{
+      position:fixed; top:20px; right:20px;
+      display:flex; justify-content:flex-end; align-items:center; gap:20px;
+      z-index:9999;
+    }
+    .toplinks a{ font-weight:bold; color:#0b57d0; text-decoration:none; }
+    .toplinks a:hover{ text-decoration:underline; }
+    .toplinks .readme-link{ order:1; }
+    .toplinks .home-link{  order:2; }
+
   </style>
+  <script src="settings.js"></script>
 </head>
 <body>
-<a href="../readme.html" class="readme-link">README</a>
-<h1>LIVEMART SEARCH</h1>
+<a href="readme/readme.html" class="readme-link">README</a>
+<h1>TEST SEARCH</h1>
 <input id="q" placeholder="イベント / 曲 / 出演者 / 会場 etc...">
 
 <!-- ボタンは自動生成される（COMMANDSから） -->
@@ -131,9 +143,19 @@ const COMMANDS = {
     label: '曲一覧',
     handler: ({songs}) => ({ songs: [...songs].sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),'ja')) })
   },
-  people: {
+  // people: {
+  //   label: 'メンバー一覧',
+  //   handler: ({people}) => ({ people: [...people].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ja')) })
+  // },
+  member: {
     label: 'メンバー一覧',
-    handler: ({people}) => ({ people: [...people].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ja')) })
+    handler: ({ people }) => ({
+      people: [...people]
+        .filter(p => String(p.left_on || '').trim() == '')
+        .sort((a, b) =>
+          String(a.name || '').localeCompare(String(b.name || ''), 'ja')
+        )
+    })
   },
   venues: {
     label: '会場一覧',
@@ -396,5 +418,103 @@ document.getElementById('q').addEventListener('input', async (e)=>{
 });
 </script>
 
+<script>
+  // URLパラメータ取得ユーティリティ
+  function getParams() {
+    return new URLSearchParams(location.search);
+  }
+
+  async function initSearchFromURL() {
+    // データ読み込み待ち
+    if (typeof dataReady !== 'undefined') {
+      await dataReady;
+    }
+
+    const params = getParams();
+    const q   = params.get('q')   || '';
+    const cmd = params.get('cmd') || '';
+
+    // 入力欄があればURLのqを反映（任意）
+    const input = document.querySelector('#q');
+    if (input) input.value = q;
+
+    // --- cmd=... がある場合：COMMANDS を使って初期描画 ---
+    if (cmd && COMMANDS && COMMANDS[cmd]) {
+      // cmd 以外の残りのパラメータをクエリに戻す（例：?cmd=songsByPlays&mode=gt1）
+      const passthrough = new URLSearchParams(params);
+      passthrough.delete('cmd');  // cmdは searchAll に種類として渡すので除外
+      // searchAll は 'cmd:種類?key=val' 形式に対応しているため、既存ロジックを活用
+      const cmdQuery = 'cmd:' + cmd + (passthrough.toString() ? ('?' + passthrough.toString()) : '');
+      const out = searchAll(cmdQuery);
+      render(out, q); // ハイライトは q を使う（cmd検索時は null でも可）
+      return;
+    }
+
+    // --- q=... がある場合：通常検索で初期描画 ---
+    if (q && q.trim()) {
+      const out = searchAll(q);
+      render(out, q);
+      return;
+    }
+
+    // どちらも無ければ、初期は何も描画しない（必要ならここでガイダンスを出す）
+    // 例）document.getElementById('result').innerHTML = '<p>検索キーワードを入力してください</p>';
+  }
+
+  document.addEventListener('DOMContentLoaded', initSearchFromURL);
+</script>
+
+
+
+<script>
+// ====== 自動適用ロジック（googleform.js の末尾に追加） ======
+(function applySiteConfig(){
+  // DOM準備後に適用（<head>や<h1>がまだ無いタイミングもあるため）
+  function run() {
+    try {
+      // 1) <title> 置き換え
+      if (typeof SITE_TITLE !== 'undefined' && SITE_TITLE) {
+        document.title = SITE_TITLE;
+      }
+
+      // 2) <h1> 置き換え（最初に見つかった h1 を対象）
+      if (typeof SITE_TITLE !== 'undefined' && SITE_TITLE) {
+        const h1 = document.querySelector('h1');
+        if (h1) h1.textContent = SITE_TITLE;
+      }
+
+      // 3) 戻るリンク（HOME_URL があれば右上に追加）
+      if (typeof HOME_URL !== 'undefined' && HOME_URL) {
+        const label = (typeof HOME_LABEL !== 'undefined' && HOME_LABEL) ? HOME_LABEL : '戻る';
+        const a = document.createElement('a');
+        a.href = HOME_URL;
+        a.textContent = label;
+        a.className = 'home-link';
+        // 既存の README（right:20px）と並べるため左側に出す
+        Object.assign(a.style, {
+          position: 'absolute',
+          top: '20px',
+          right: '20px',
+          fontWeight: 'bold',
+          color: '#0b57d0',
+          textDecoration: 'none',
+        });
+        a.addEventListener('mouseover', () => a.style.textDecoration = 'underline');
+        a.addEventListener('mouseout',  () => a.style.textDecoration = 'none');
+        document.body.appendChild(a);
+      }
+    } catch (e) {
+      // 失敗してもサイト自体は動くように黙ってスルー
+      // console.warn(e);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else {
+    run();
+  }
+})();
+</script>
 </body>
 </html>

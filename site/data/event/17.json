@@ -1,0 +1,134 @@
+{
+  "id": 17,
+  "date": "2024-12-27",
+  "title": "[8th EP] Release Party!!",
+  "sub_title": "Sproject presents",
+  "venue": "秋葉原CLUB GOODMAN",
+  "venue_id": 5,
+  "era": "",
+  "era_id": null,
+  "tour": "",
+  "tour_id": null,
+  "form": "",
+  "video_url": "",
+  "acts": [
+    {
+      "seq": 1,
+      "name": "Sproject feat yodaka",
+      "act_id": 75
+    },
+    {
+      "seq": 2,
+      "name": "QUEEN RABBIT",
+      "act_id": 1
+    },
+    {
+      "seq": 3,
+      "name": "珠希美いな",
+      "act_id": 13
+    },
+    {
+      "seq": 4,
+      "name": "AKARA",
+      "act_id": 48
+    },
+    {
+      "seq": 5,
+      "name": "Sproject",
+      "act_id": 2
+    }
+  ],
+  "lineup": [
+    {
+      "person_id": 1,
+      "name": "Misaco",
+      "role": "Vocal",
+      "position": "",
+      "ord": 1
+    },
+    {
+      "person_id": 3,
+      "name": "スズムラアタル",
+      "role": "Guitar",
+      "position": "",
+      "ord": 2
+    },
+    {
+      "person_id": 10,
+      "name": "ヒロ店長",
+      "role": "Guitar",
+      "position": "",
+      "ord": 3
+    },
+    {
+      "person_id": 4,
+      "name": "Ryo",
+      "role": "Bass",
+      "position": "",
+      "ord": 4
+    },
+    {
+      "person_id": 5,
+      "name": "てつを",
+      "role": "Drum",
+      "position": "",
+      "ord": 5
+    }
+  ],
+  "setlist": [
+    {
+      "seq": 1,
+      "song_id": 3,
+      "song_title": "DOOMSDAY",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 2,
+      "song_id": 7,
+      "song_title": "OCEANUS",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 3,
+      "song_id": 5,
+      "song_title": "My Servant",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 4,
+      "song_id": 2,
+      "song_title": "Dolce Vita",
+      "section": null,
+      "version": "撮影可能曲",
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 5,
+      "song_id": 10,
+      "song_title": "Judgement",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 6,
+      "song_id": 6,
+      "song_title": "LOVE SPIDER",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    }
+  ]
+}

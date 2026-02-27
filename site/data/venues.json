@@ -53,5 +53,20 @@
     "id": 11,
     "name": "池袋手刀",
     "url": "http://www.chop-tokyo.info/"
+  },
+  {
+    "id": 12,
+    "name": "吉祥寺CRESCENDO",
+    "url": ""
+  },
+  {
+    "id": 13,
+    "name": "上野音横丁",
+    "url": ""
+  },
+  {
+    "id": 14,
+    "name": "初台DOORS",
+    "url": ""
   }
 ]

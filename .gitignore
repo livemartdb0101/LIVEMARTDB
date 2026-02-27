@@ -29,7 +29,7 @@ Thumbs.db
 # その他
 .env
 *.tmp
-*.md
+# *.md
 *.jpg
 *.csv
 *.xlsx

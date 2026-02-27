@@ -3,6 +3,33 @@
   "name": "Sena",
   "events": [
     {
+      "event_id": 18,
+      "date": "2025-01-25",
+      "title": "CrazyFest Vol.252",
+      "venue": "吉祥寺CRESCENDO",
+      "venue_id": 12,
+      "form": null,
+      "role": "Guitar"
+    },
+    {
+      "event_id": 26,
+      "date": "2025-02-09",
+      "title": "CrazyFest EXTRA-15Vt.SP",
+      "venue": "赤羽ReNY alpha",
+      "venue_id": 1,
+      "form": null,
+      "role": "Guitar"
+    },
+    {
+      "event_id": 16,
+      "date": "2025-03-10",
+      "title": "Sproject×QUEEN RABBIT 2MAN SHOW",
+      "venue": "秋葉原CLUB GOODMAN",
+      "venue_id": 5,
+      "form": null,
+      "role": "Guitar"
+    },
+    {
       "event_id": 3,
       "date": "2025-05-06",
       "title": "CrazyFest",

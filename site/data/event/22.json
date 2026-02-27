@@ -1,0 +1,128 @@
+{
+  "id": 22,
+  "date": "2024-08-22",
+  "title": "ガオフェス2024 (｢･ω･)｢ 1日目だがお！",
+  "sub_title": "夏海 生誕企画",
+  "venue": "初台DOORS",
+  "venue_id": 14,
+  "era": "",
+  "era_id": null,
+  "tour": "",
+  "tour_id": null,
+  "form": "",
+  "video_url": "",
+  "acts": [
+    {
+      "seq": 1,
+      "name": "Meny",
+      "act_id": 59
+    },
+    {
+      "seq": 2,
+      "name": "AccessCode:3826",
+      "act_id": 60
+    },
+    {
+      "seq": 3,
+      "name": "神様のアリバイ",
+      "act_id": 6
+    },
+    {
+      "seq": 4,
+      "name": "NOSTALGIA",
+      "act_id": 61
+    },
+    {
+      "seq": 5,
+      "name": "漆黒の協奏曲〜コンチェルト〜",
+      "act_id": 62
+    },
+    {
+      "seq": 6,
+      "name": "QUEEN RABBIT",
+      "act_id": 1
+    },
+    {
+      "seq": 7,
+      "name": "ヴァルプルギスの夜〜第９夜〜",
+      "act_id": 63
+    }
+  ],
+  "lineup": [
+    {
+      "person_id": 1,
+      "name": "Misaco",
+      "role": "Vocal",
+      "position": "",
+      "ord": 1
+    },
+    {
+      "person_id": 9,
+      "name": "Nao",
+      "role": "Guitar",
+      "position": "",
+      "ord": 2
+    },
+    {
+      "person_id": 4,
+      "name": "Ryo",
+      "role": "Bass",
+      "position": "",
+      "ord": 3
+    },
+    {
+      "person_id": 5,
+      "name": "てつを",
+      "role": "Drum",
+      "position": "",
+      "ord": 4
+    }
+  ],
+  "setlist": [
+    {
+      "seq": 1,
+      "song_id": 3,
+      "song_title": "DOOMSDAY",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 2,
+      "song_id": 7,
+      "song_title": "OCEANUS",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 3,
+      "song_id": 5,
+      "song_title": "My Servant",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 4,
+      "song_id": 10,
+      "song_title": "Judgement",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 5,
+      "song_id": 6,
+      "song_title": "LOVE SPIDER",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    }
+  ]
+}

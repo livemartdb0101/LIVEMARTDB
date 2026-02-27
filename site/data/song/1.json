@@ -3,6 +3,28 @@
   "title": "月下美人",
   "events": [
     {
+      "event_id": 26,
+      "date": "2025-02-09",
+      "title": "CrazyFest EXTRA-15Vt.SP",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
+      "form": "",
+      "seq": 4,
+      "section": null,
+      "version": ""
+    },
+    {
+      "event_id": 16,
+      "date": "2025-03-10",
+      "title": "Sproject×QUEEN RABBIT 2MAN SHOW",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
+      "form": "",
+      "seq": 6,
+      "section": null,
+      "version": ""
+    },
+    {
       "event_id": 1,
       "date": "2025-04-13",
       "title": "TETEFES",

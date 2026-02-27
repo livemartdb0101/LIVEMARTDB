@@ -4,8 +4,16 @@
     "name": "4xxERRORCODE"
   },
   {
+    "id": 60,
+    "name": "AccessCode:3826"
+  },
+  {
     "id": 48,
     "name": "AKARA"
+  },
+  {
+    "id": 78,
+    "name": "Anatomy"
   },
   {
     "id": 38,
@@ -18,6 +26,10 @@
   {
     "id": 47,
     "name": "CANTOY"
+  },
+  {
+    "id": 50,
+    "name": "CiTLiNe"
   },
   {
     "id": 20,
@@ -34,6 +46,14 @@
   {
     "id": 22,
     "name": "Empress"
+  },
+  {
+    "id": 67,
+    "name": "EVA"
+  },
+  {
+    "id": 74,
+    "name": "Free Aqua Butterfly"
   },
   {
     "id": 21,
@@ -60,8 +80,24 @@
     "name": "LUCIDA"
   },
   {
+    "id": 57,
+    "name": "Lycoris"
+  },
+  {
+    "id": 71,
+    "name": "LYL"
+  },
+  {
+    "id": 76,
+    "name": "Magistina Saga"
+  },
+  {
     "id": 14,
     "name": "MANATY"
+  },
+  {
+    "id": 59,
+    "name": "Meny"
   },
   {
     "id": 35,
@@ -80,12 +116,24 @@
     "name": "Muscle Soul"
   },
   {
+    "id": 61,
+    "name": "NOSTALGIA"
+  },
+  {
+    "id": 52,
+    "name": "Plug in"
+  },
+  {
     "id": 7,
     "name": "Qtwins"
   },
   {
     "id": 1,
     "name": "QUEEN RABBIT"
+  },
+  {
+    "id": 72,
+    "name": "RageLmin"
   },
   {
     "id": 44,
@@ -104,6 +152,10 @@
     "name": "sari"
   },
   {
+    "id": 58,
+    "name": "SenaDrum"
+  },
+  {
     "id": 23,
     "name": "Sirius"
   },
@@ -114,6 +166,10 @@
   {
     "id": 2,
     "name": "Sproject"
+  },
+  {
+    "id": 75,
+    "name": "Sproject feat yodaka"
   },
   {
     "id": 40,
@@ -140,16 +196,44 @@
     "name": "yesAND"
   },
   {
+    "id": 51,
+    "name": "さくら"
+  },
+  {
     "id": 31,
     "name": "にゃんにゃん倶楽部"
+  },
+  {
+    "id": 77,
+    "name": "はるちょん"
+  },
+  {
+    "id": 49,
+    "name": "みちゃんこ"
   },
   {
     "id": 3,
     "name": "キングハムスター"
   },
   {
+    "id": 68,
+    "name": "ディアブルボア"
+  },
+  {
+    "id": 64,
+    "name": "マザコン"
+  },
+  {
     "id": 27,
     "name": "ユキSESSION"
+  },
+  {
+    "id": 69,
+    "name": "リリックホリック歌劇団"
+  },
+  {
+    "id": 63,
+    "name": "ヴァルプルギスの夜〜第９夜〜"
   },
   {
     "id": 9,
@@ -164,6 +248,10 @@
     "name": "凛月"
   },
   {
+    "id": 55,
+    "name": "劇団Moyashi"
+  },
+  {
     "id": 29,
     "name": "囁揺的音楽集団 AsMR"
   },
@@ -176,6 +264,14 @@
     "name": "我我"
   },
   {
+    "id": 66,
+    "name": "浮迷夜"
+  },
+  {
+    "id": 62,
+    "name": "漆黒の協奏曲〜コンチェルト〜"
+  },
+  {
     "id": 13,
     "name": "珠希美いな"
   },
@@ -184,11 +280,35 @@
     "name": "神様のアリバイ"
   },
   {
+    "id": 70,
+    "name": "神飢狼"
+  },
+  {
+    "id": 54,
+    "name": "秘密結社びびびなてぃー"
+  },
+  {
+    "id": 65,
+    "name": "芋ーIMOー"
+  },
+  {
     "id": 15,
     "name": "落果"
   },
   {
+    "id": 53,
+    "name": "衝動性ヒステリアMk-Ⅱ"
+  },
+  {
     "id": 12,
     "name": "青の流星群"
+  },
+  {
+    "id": 73,
+    "name": "革命メロイック"
+  },
+  {
+    "id": 56,
+    "name": "鶴丸彩"
   }
 ]
