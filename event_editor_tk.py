@@ -27,17 +27,17 @@ EXPORT_PY = os.path.join(ROOT_DIR, "export_json.py")
 
 ERROR_LOG_PATH = os.path.join(BASE_DIR, "error.log")
 
-# def _log_error(msg: str, exc: Exception | None = None):
-#     """エラー時のみ error.log に追記。普段はログを出さない方針。"""
-#     try:
-#         with open(ERROR_LOG_PATH, "a", encoding="utf-8") as f:
-#             ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#             f.write(f"[{ts}] {msg}\n")
-#             if exc:
-#                 f.write(f"  {type(exc).__name__}: {exc}\n")
-#     except Exception:
-#         # ログ書き込みでさらに失敗しても黙殺（ユーザー体験優先）
-#         pass
+def _log_error(msg: str, exc: Exception | None = None):
+    """エラー時のみ error.log に追記。普段はログを出さない方針。"""
+    try:
+        with open(ERROR_LOG_PATH, "a", encoding="utf-8") as f:
+            ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            f.write(f"[{ts}] {msg}\n")
+            if exc:
+                f.write(f"  {type(exc).__name__}: {exc}\n")
+    except Exception:
+        # ログ書き込みでさらに失敗しても黙殺（ユーザー体験優先）
+        pass
 
 def _exec_script(con: sqlite3.Connection, sql: str):
     cur = con.cursor()
@@ -309,7 +309,7 @@ def ensure_db():
                 _ensure_minimum_objects(con)
 
     except Exception as e:
-        # _log_error("DB初期化/整合性チェック中にエラーが発生しました。", e)
+        _log_error("DB初期化/整合性チェック中にエラーが発生しました。", e)
         # 必要最小限の通知（GUI前なので messagebox ではなく print でもOK）
         print("Error: データベースの初期化に失敗しました。error.log を確認してください。", file=sys.stderr)
         # ここで再スローしても良いが、起動継続させない方が安全
@@ -347,7 +347,8 @@ def exec1(sql, args=()):
         cur = con.execute(sql, args)
         con.commit()
 
-        if sql.strip().upper().startswith(("UPDATE", "DELETE")):
+        # if sql.strip().upper().startswith(("UPDATE", "DELETE")):
+        if sql.strip().upper().startswith("UPDATE"):
             if cur.rowcount == 0:
                 raise RuntimeError(f"更新失敗検知: {sql}")
 
@@ -573,6 +574,16 @@ class App(ttk.Frame):
         self.events_tv.bind("<<TreeviewSelect>>", self.on_event_select)
 
 
+
+
+
+
+
+
+
+
+
+
         # # --- 右ペイン（イベント編集）
 
         # --- 出演者（lineup）
@@ -584,7 +595,7 @@ class App(ttk.Frame):
             lf,
             columns=("name","role"),   # ★ pos/guest を削除
             show="headings",
-            height=4
+            height=3
         )
         self.lineup_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
         for c, t, w in [
@@ -630,7 +641,7 @@ class App(ttk.Frame):
             bf,
             columns=("seq","act_name"),
             show="headings",
-            height=4
+            height=3
         )
         self.band_tv.heading("seq", text="#")
         self.band_tv.heading("act_name", text="バンド名")
@@ -671,7 +682,7 @@ class App(ttk.Frame):
         # # 1) Treeview を“先に”作る
         # self.setlist_tv = ttk.Treeview(
         #     sf, columns=("seq","title","section","version"),
-        #     show="headings", height=4
+        #     show="headings", height=3
         # )
         # self.setlist_tv.heading("seq",     text="#")
         # self.setlist_tv.heading("title",   text="曲名")
@@ -695,13 +706,39 @@ class App(ttk.Frame):
         # self.setlist_tv.bind("<<TreeviewSelect>>", self.on_setlist_select)
 
         # --- セトリ UI ---
-        sf = ttk.LabelFrame(right, text="セトリ編集（seqは常に1..N）")
-        sf.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
+        # sf = ttk.LabelFrame(right, text="セトリ編集（seqは常に1..N）")
+        # sf.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
+
+
+
+        sf_outer = ttk.Frame(right)
+        sf_outer.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
+
+        # ヘッダー行（タイトル＋ボタン）
+        header = ttk.Frame(sf_outer)
+        header.pack(fill=tk.X)
+
+        ttk.Label(header, text="セトリ編集（seqは常に1..N）",
+                font=("", 10)).pack(side=tk.LEFT)
+
+        ttk.Button(
+            header,
+            text="出演者を一括適用",
+            command=self.apply_lineup_to_setlist
+        ).pack(side=tk.RIGHT)
+
+        # 中身のフレーム（元のsfの代わり）
+        sf = ttk.Frame(sf_outer)
+        sf.pack(fill=tk.BOTH, expand=True)
+
+
+
+
 
         # 1) Treeview 作成（器を作る）
         self.setlist_tv = ttk.Treeview(
             sf, columns=("seq","title","section","version"),
-            show="headings", height=4
+            show="headings", height=3
         )
 
         # 2) 見た目の設定（★反映されていた「下の方」の数値を採用★）
@@ -734,18 +771,79 @@ class App(ttk.Frame):
         self.version_var = tk.StringVar()
         ttk.Entry(add_fr, textvariable=self.version_var, width=10).grid(row=1, column=7, sticky="w", pady=(6,0), padx=(4,0))
 
-        btn2_fr = ttk.Frame(sf); btn2_fr.pack(fill=tk.X, padx=6, pady=(4,6))
-        ttk.Button(btn2_fr, text="追加", command=self.add_row).pack(side=tk.LEFT)
-        ttk.Button(btn2_fr, text="削除", command=self.delete_row).pack(side=tk.LEFT, padx=6)
-        # ★ 追加（ここから）
-        ttk.Button(btn2_fr, text="▲上へ", command=lambda: self.move_setlist("up")).pack(side=tk.LEFT, padx=(12,0))
-        ttk.Button(btn2_fr, text="▼下へ", command=lambda: self.move_setlist("down")).pack(side=tk.LEFT, padx=6)
-        # ★ 追加（ここまで）
-        ttk.Button(btn2_fr, text="更新", command=self.update_selected_row).pack(side=tk.LEFT, padx=12)
+        # style = ttk.Style()
+        # style.configure("Small.TButton", padding=(4, 1))
+
+        # btn2_fr = ttk.Frame(sf); btn2_fr.pack(fill=tk.X, padx=6, pady=(4,6))
+        # ttk.Button(btn2_fr, text="追加", style="Small.TButton", command=self.add_row).pack(side=tk.LEFT)
+        # ttk.Button(btn2_fr, text="削除", style="Small.TButton", command=self.delete_row).pack(side=tk.LEFT, padx=6)
+        # # ★ 追加（ここから）
+        # ttk.Button(btn2_fr, text="▲上へ", command=lambda: self.move_setlist("up")).pack(side=tk.LEFT, padx=(12,0))
+        # ttk.Button(btn2_fr, text="▼下へ", command=lambda: self.move_setlist("down")).pack(side=tk.LEFT, padx=6)
+        # # ★ 追加（ここまで）
+        # ttk.Button(btn2_fr, text="更新", style="Small.TButton", command=self.update_selected_row).pack(side=tk.LEFT, padx=12)
+
+        # ttk.Button(
+        #     btn2_fr,
+        #     text="一括適用"
+        #     # command=self.apply_lineup_to_setlist
+        # ).pack(side=tk.RIGHT)
+
+        btn2_fr = ttk.Frame(sf)
+        btn2_fr.pack(fill=tk.X, padx=6, pady=(4,6))
+
+        # 左側（既存ボタン）
+        left = ttk.Frame(btn2_fr)
+        left.pack(side=tk.LEFT)
+
+        ttk.Button(left, text="追加", command=self.add_row).pack(side=tk.LEFT)
+        ttk.Button(left, text="削除", command=self.delete_row).pack(side=tk.LEFT, padx=6)
+        ttk.Button(left, text="▲上へ", command=lambda: self.move_setlist("up")).pack(side=tk.LEFT, padx=(12,0))
+        ttk.Button(left, text="▼下へ", command=lambda: self.move_setlist("down")).pack(side=tk.LEFT, padx=6)
+        ttk.Button(left, text="更新", command=self.update_selected_row).pack(side=tk.LEFT, padx=12)
+
+        # 右側（新ボタン）
+        ttk.Button(
+            btn2_fr,
+            text="出演者を一括適用",
+            command=self.apply_lineup_to_setlist
+        ).pack(side=tk.RIGHT)
+
 
         # ステータス
         self.status = tk.StringVar(value="Ready")
         ttk.Label(self, textvariable=self.status, foreground="#666").pack(anchor="w", padx=10, pady=(0,8))
+
+
+    def get_current_lineup(self):
+        return qall("""
+            SELECT member_id, role, COALESCE(ord,999999) AS ord
+            FROM lineup
+            WHERE event_id=?
+            ORDER BY ord, member_id
+        """, (self.event_id,))
+
+    def apply_lineup_to_setlist(self):
+        lineup = self.get_current_lineup()
+        for row_id in self.setlist_tv.get_children():
+            seq = self.setlist_tv.item(row_id)["values"][0]
+            self.apply_lineup_to_song(seq, lineup)
+        self.status.set("Lineup を全曲へ適用しました")
+
+    def apply_lineup_to_song(self, seq, lineup):
+        # 既存 performer を削除
+        exec1(
+            "DELETE FROM performer WHERE event_id=? AND seq=?",
+            (self.event_id, seq)
+        )
+
+        # lineup を順に登録
+        for i, r in enumerate(lineup, start=1):
+            exec1("""
+                INSERT INTO performer(event_id, seq, member_id, role, ord)
+                VALUES (?, ?, ?, ?, ?)
+            """, (self.event_id, seq, r["member_id"], r["role"], i))
+
 
     # ----- イベント一覧 -----
     def refresh_events(self):
@@ -1832,7 +1930,39 @@ class App(ttk.Frame):
 
 
         # lineup → performer へ適用
+
+        # def apply_lineup_to_seq():
+        #     rows = qall("""
+        #         SELECT member_id, role, COALESCE(ord,999999) AS ord
+        #         FROM lineup
+        #         WHERE event_id=?
+        #         ORDER BY ord, member_id
+        #     """, (self.event_id,))
+
+        #     if not rows:
+        #         messagebox.showinfo("適用", "lineup が空です")
+        #         return
+
+        #     exec1("DELETE FROM performer WHERE event_id=? AND seq=?", (self.event_id, seq))
+
+        #     for i, r in enumerate(rows, start=1):
+        #         exec1("""
+        #             INSERT INTO performer(event_id, seq, member_id, role, ord)
+        #             VALUES (?, ?, ?, ?, ?)
+        #         """, (self.event_id, seq, r["member_id"], r["role"], i))
+
+        #     load_performers()
+        #     # messagebox.showinfo("適用", "lineup の並び順どおりに適用しました。")
+
         def apply_lineup_to_seq():
+            sel = self.setlist_tv.selection()
+            if not sel:
+                messagebox.showwarning("適用", "セトリを選択してください")
+                return
+
+            values = self.setlist_tv.item(sel[0])["values"]
+            seq = values[0]   # ← これが必要
+
             rows = qall("""
                 SELECT member_id, role, COALESCE(ord,999999) AS ord
                 FROM lineup
@@ -1846,6 +1976,8 @@ class App(ttk.Frame):
 
             exec1("DELETE FROM performer WHERE event_id=? AND seq=?", (self.event_id, seq))
 
+
+
             for i, r in enumerate(rows, start=1):
                 exec1("""
                     INSERT INTO performer(event_id, seq, member_id, role, ord)
@@ -1853,7 +1985,7 @@ class App(ttk.Frame):
                 """, (self.event_id, seq, r["member_id"], r["role"], i))
 
             load_performers()
-            # messagebox.showinfo("適用", "lineup の並び順どおりに適用しました。")
+
 
         # ボタン群
         ttk.Button(ctl, text="追加", command=add_perf).grid(row=0, column=7, sticky="w", padx=(8,0))

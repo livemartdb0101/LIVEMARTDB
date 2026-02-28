@@ -108,7 +108,38 @@
       "section": null,
       "version": null,
       "note": "",
-      "performer": []
+      "performer": [
+        {
+          "person_id": 1,
+          "name": "Misaco",
+          "role": "Vocal",
+          "position": ""
+        },
+        {
+          "person_id": 2,
+          "name": "Sena",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 3,
+          "name": "スズムラアタル",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 4,
+          "name": "Ryo",
+          "role": "Bass",
+          "position": ""
+        },
+        {
+          "person_id": 5,
+          "name": "てつを",
+          "role": "Drum",
+          "position": ""
+        }
+      ]
     },
     {
       "seq": 2,
@@ -117,7 +148,38 @@
       "section": null,
       "version": null,
       "note": "",
-      "performer": []
+      "performer": [
+        {
+          "person_id": 1,
+          "name": "Misaco",
+          "role": "Vocal",
+          "position": ""
+        },
+        {
+          "person_id": 2,
+          "name": "Sena",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 3,
+          "name": "スズムラアタル",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 4,
+          "name": "Ryo",
+          "role": "Bass",
+          "position": ""
+        },
+        {
+          "person_id": 5,
+          "name": "てつを",
+          "role": "Drum",
+          "position": ""
+        }
+      ]
     },
     {
       "seq": 3,
@@ -126,7 +188,38 @@
       "section": null,
       "version": null,
       "note": "",
-      "performer": []
+      "performer": [
+        {
+          "person_id": 1,
+          "name": "Misaco",
+          "role": "Vocal",
+          "position": ""
+        },
+        {
+          "person_id": 2,
+          "name": "Sena",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 3,
+          "name": "スズムラアタル",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 4,
+          "name": "Ryo",
+          "role": "Bass",
+          "position": ""
+        },
+        {
+          "person_id": 5,
+          "name": "てつを",
+          "role": "Drum",
+          "position": ""
+        }
+      ]
     },
     {
       "seq": 4,
@@ -135,7 +228,38 @@
       "section": null,
       "version": null,
       "note": "",
-      "performer": []
+      "performer": [
+        {
+          "person_id": 1,
+          "name": "Misaco",
+          "role": "Vocal",
+          "position": ""
+        },
+        {
+          "person_id": 2,
+          "name": "Sena",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 3,
+          "name": "スズムラアタル",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 4,
+          "name": "Ryo",
+          "role": "Bass",
+          "position": ""
+        },
+        {
+          "person_id": 5,
+          "name": "てつを",
+          "role": "Drum",
+          "position": ""
+        }
+      ]
     },
     {
       "seq": 5,
@@ -144,7 +268,38 @@
       "section": null,
       "version": null,
       "note": "",
-      "performer": []
+      "performer": [
+        {
+          "person_id": 1,
+          "name": "Misaco",
+          "role": "Vocal",
+          "position": ""
+        },
+        {
+          "person_id": 2,
+          "name": "Sena",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 3,
+          "name": "スズムラアタル",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 4,
+          "name": "Ryo",
+          "role": "Bass",
+          "position": ""
+        },
+        {
+          "person_id": 5,
+          "name": "てつを",
+          "role": "Drum",
+          "position": ""
+        }
+      ]
     },
     {
       "seq": 6,
@@ -153,7 +308,38 @@
       "section": null,
       "version": null,
       "note": "",
-      "performer": []
+      "performer": [
+        {
+          "person_id": 1,
+          "name": "Misaco",
+          "role": "Vocal",
+          "position": ""
+        },
+        {
+          "person_id": 2,
+          "name": "Sena",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 3,
+          "name": "スズムラアタル",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 4,
+          "name": "Ryo",
+          "role": "Bass",
+          "position": ""
+        },
+        {
+          "person_id": 5,
+          "name": "てつを",
+          "role": "Drum",
+          "position": ""
+        }
+      ]
     },
     {
       "seq": 7,
@@ -162,7 +348,38 @@
       "section": null,
       "version": null,
       "note": "",
-      "performer": []
+      "performer": [
+        {
+          "person_id": 1,
+          "name": "Misaco",
+          "role": "Vocal",
+          "position": ""
+        },
+        {
+          "person_id": 2,
+          "name": "Sena",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 3,
+          "name": "スズムラアタル",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 4,
+          "name": "Ryo",
+          "role": "Bass",
+          "position": ""
+        },
+        {
+          "person_id": 5,
+          "name": "てつを",
+          "role": "Drum",
+          "position": ""
+        }
+      ]
     },
     {
       "seq": 8,
@@ -171,7 +388,38 @@
       "section": null,
       "version": null,
       "note": "",
-      "performer": []
+      "performer": [
+        {
+          "person_id": 1,
+          "name": "Misaco",
+          "role": "Vocal",
+          "position": ""
+        },
+        {
+          "person_id": 2,
+          "name": "Sena",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 3,
+          "name": "スズムラアタル",
+          "role": "Guitar",
+          "position": ""
+        },
+        {
+          "person_id": 4,
+          "name": "Ryo",
+          "role": "Bass",
+          "position": ""
+        },
+        {
+          "person_id": 5,
+          "name": "てつを",
+          "role": "Drum",
+          "position": ""
+        }
+      ]
     }
   ]
 }
