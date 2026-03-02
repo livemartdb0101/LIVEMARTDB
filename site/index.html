@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TEST SEARCH</title>
   <style>
     body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 20px; }
@@ -143,10 +144,6 @@ const COMMANDS = {
     label: '曲一覧',
     handler: ({songs}) => ({ songs: [...songs].sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),'ja')) })
   },
-  // people: {
-  //   label: 'メンバー一覧',
-  //   handler: ({people}) => ({ people: [...people].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ja')) })
-  // },
   member: {
     label: 'メンバー一覧',
     handler: ({ people }) => ({
@@ -181,7 +178,6 @@ const COMMANDS = {
     label: '演奏回数の多い曲',
     handler: ({songs}, {params}) => {
       let mode = params.mode || 'gt0'; // 既定は 2回以上表示
-      // let mode = params.mode; // 既定は 2回以上表示
       const rows = songs.map(s=>{
         const sid=Number(s.id);
         return { ...s, count: Number(songPlayCount.get(sid)||0) };
@@ -227,16 +223,6 @@ async function renderToolbar(){
   });
 }
 dataReady.then(renderToolbar);
-
-/* ====== コマンド実行 ====== */
-// async function runCmd(kindWithQuery){
-//   await dataReady;
-//   const qEl=document.getElementById('q');
-//   const cmdStr = `cmd:${kindWithQuery}`;
-//   qEl.value = cmdStr;
-//   const out = searchAll(cmdStr);
-//   render(out, cmdStr);
-// }
 
 async function runCmd(kindWithQuery){
   await dataReady;

@@ -470,6 +470,7 @@ Windows の場合
 # １－７. プロジェクトフォルダを作る- （１分）
 
 ```
+cd Documents
 mkdir BANDNAME　　←読み替えてね
 ```
 
@@ -628,6 +629,7 @@ cd
 プロジェクトフォルダに移動して、python スクリプトを起動します。
 
 ```
+cd Documents
 cd BANDNAME　　←読み替えてね
 python event_editor_tk.py
 ```

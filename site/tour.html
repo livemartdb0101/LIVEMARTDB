@@ -2,25 +2,43 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tour</title>
   <style>
-    body { font-family: system-ui, sans-serif; margin: 20px; }
+    body { font-family: system-ui, sans-serif; overflow-x: auto; margin: 20px; }
     table { border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ccc; padding: 4px 8px; }
+    th, td { border: 1px solid #ccc; padding: 4px 8px; white-space: nowrap; }
     img { max-width: 300px; border: 1px solid #ccc; margin: 10px 0; }
 
     /* クリック拡大用ライトボックス */
     .lightbox[hidden]{ display:none; }
     .lightbox{
-      position:fixed; inset:0; z-index:9999;
-      display:flex; align-items:center; justify-content:center;
-      background:rgba(0,0,0,.8); cursor:zoom-out;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100dvh;                 /* モバイルのツールバー出入りに追従 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.8);
+      cursor: zoom-out;
+      overscroll-behavior: contain;    /* 背景へのスクロール連鎖を防止 */
+      padding: 0;                      /* 余白で溢れないようゼロに */
     }
+
+    /* 画像は“内接”で収める。スクロール不要・比率維持 */
     .lightbox img{
-      max-width:min(90vw,1200px); max-height:90vh;
-      box-shadow:0 8px 24px rgba(0,0,0,.4); border-radius:4px; background:#fff;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;             /* 等比で画面内に収めるポイント */
+      max-width: none;                 /* 既存の max-* を無効化 */
+      max-height: none;
+      box-shadow: none;                /* 影や枠が要るなら、その分だけ size を引く */
+      border: none;
+      background: #0000;
     }
-  </style>
+
+</style>
 </head>
 <body>
   <a href="index.html">← 検索に戻る</a>
@@ -76,18 +94,36 @@
     // ----- ライトボックス本体 -----
     const lb = document.getElementById('lightbox');
     const lbImg = document.getElementById('lightbox-img');
-
     function openLightbox(src, alt){
+      // 画像セット
       lbImg.src = src;
       lbImg.alt = alt || '';
+
+      // スクロール位置を保持してロック（ジャンプしない）
+      __scrollY = window.scrollY || window.pageYOffset;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${__scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+
       lb.hidden = false;
-      document.body.style.overflow = 'hidden'; // 背景スクロール抑止
     }
+
     function closeLightbox(){
       lb.hidden = true;
       lbImg.src = '';
-      document.body.style.overflow = '';
+
+      // ロック解除して元の位置に戻す
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+
+      window.scrollTo(0, __scrollY);  // ← 開いた地点へ復帰
     }
+
 
     // 画像クリックで拡大（zoomable に対するイベント委譲）
     document.addEventListener('click', (e) => {
