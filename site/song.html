@@ -10,41 +10,41 @@
     th, td { border: 1px solid #ccc; padding: 4px 8px; white-space: nowrap; }
     img { max-width: 300px; border: 1px solid #ccc; margin: 10px 0; }
 
-    /* クリック拡大用ライトボックス */
+    /* 横ズレ抑制（対応ブラウザのみ・安全） */
+    html { scrollbar-gutter: stable; }
+
+    /* ライトボックス（共通） */
     .lightbox[hidden]{ display:none; }
     .lightbox{
       position: fixed;
       inset: 0;
       width: 100vw;
-      height: 100dvh;                 /* モバイルのツールバー出入りに追従 */
+      height: 100dvh;     /* モバイルのツールバー出入りに追従 */
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(0,0,0,.8);
       cursor: zoom-out;
-      overscroll-behavior: contain;    /* 背景へのスクロール連鎖を防止 */
-      padding: 0;                      /* 余白で溢れないようゼロに */
+      overscroll-behavior: contain;  /* 背景へのスクロール連鎖を防止 */
+      padding: 0;
     }
-
-    /* 画像は“内接”で収める。スクロール不要・比率維持 */
     .lightbox img{
       width: 100%;
       height: 100%;
-      object-fit: contain;             /* 等比で画面内に収めるポイント */
-      max-width: none;                 /* 既存の max-* を無効化 */
+      object-fit: contain;  /* 等比で画面内に収める */
+      max-width: none;
       max-height: none;
-      box-shadow: none;                /* 影や枠が要るなら、その分だけ size を引く */
       border: none;
       background: #0000;
+      box-shadow: none;
     }
-
   </style>
 </head>
 <body>
   <a href="index.html">← 検索に戻る</a>
   <div id="content"></div>
 
-  <!-- ライトボックス（拡大画像表示用） -->
+  <!-- Lightbox Overlay（共通） -->
   <div id="lightbox" class="lightbox" hidden>
     <img id="lightbox-img" alt="">
   </div>
@@ -55,26 +55,51 @@
       return params.get('id');
     }
 
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[c]));
+    }
+
+    async function fileExists(url) {
+      try {
+        const r = await fetch(url, { method:'HEAD', cache:'no-cache' });
+        return r.ok;
+      } catch { return false; }
+    }
+
+    /* Song ギャラリー収集：image/song_<id>_1.webp ... _25.webp */
+    async function collectGalleryImages(id) {
+      const urls = [];
+      const safeId = encodeURIComponent(id);
+      for (let i = 1; i <= 25; i++) {
+        const u = `image/song_${safeId}_${i}.webp`;
+        if (await fileExists(u)) urls.push(u); else break;
+      }
+      return urls;
+    }
+
     async function main() {
       const id = getId();
       if (!id) return;
 
-      const song = await fetch(`data/song/${id}.json`).then(r => r.json());
-      const div = document.getElementById('content');
+      const song = await fetch(`data/song/${encodeURIComponent(id)}.json`).then(r => r.json());
+      const div  = document.getElementById('content');
 
       let html = '';
-      html += `<h1>${song.title}</h1>`;
+      html += `<h1>${escapeHtml(song.title)}</h1>`;
 
-      // ジャケット画像 song_<id>.webp（存在しない場合は非表示）
-      const imgPath = `image/song_${id}.webp`;
+      /* ジャケット画像（存在しなければ非表示 / クリックで拡大） */
+      const imgPath = `image/song_${encodeURIComponent(id)}.webp`;
       html += `
         <p>
-          <img class="zoomable" src="${imgPath}" alt="${song.title}"
+          <img class="zoomable" src="${imgPath}" alt="${escapeHtml(song.title)}"
                onerror="this.style.display='none'">
         </p>
       `;
 
-      if (song.events && song.events.length) {
+      /* 演奏イベント一覧 */
+      if (Array.isArray(song.events) && song.events.length) {
         html += `<h3>演奏イベント一覧</h3>`;
         html += `<table>
           <tr>
@@ -89,13 +114,13 @@
 
         song.events.forEach(e => {
           html += `<tr>
-            <td>${e.date}</td>
-            <td><a href="event.html?id=${e.event_id}">${e.title}</a></td>
-            <td><a href="venue.html?id=${e.venue_id}">${e.venue}</a></td>
-            <td>${e.form || ''}</td>
-            <td><a href="event-song.html?event=${e.event_id}&song=${song.id}&seq=${e.seq}">${e.seq}</a></td>
-            <td>${e.section || ''}</td>
-            <td>${e.version || ''}</td>
+            <td>${escapeHtml(e.date)}</td>
+            <td><a href="event.html?id=${encodeURIComponent(e.event_id)}">${escapeHtml(e.title)}</a></td>
+            <td><a href="venue.html?id=${encodeURIComponent(e.venue_id)}">${escapeHtml(e.venue)}</a></td>
+            <td>${escapeHtml(e.form || '')}</td>
+            <td><a href="event-song.html?event=${encodeURIComponent(e.event_id)}&song=${encodeURIComponent(song.id)}&seq=${encodeURIComponent(e.seq)}">${escapeHtml(e.seq)}</a></td>
+            <td>${escapeHtml(e.section || '')}</td>
+            <td>${escapeHtml(e.version || '')}</td>
           </tr>`;
         });
 
@@ -105,69 +130,103 @@
       }
 
       div.innerHTML = html;
-      // ※ クリックハンドラはイベント委譲で下に一括定義
+
+      /* --- ギャラリー（ある時だけ見出し＋一覧を表示） --- */
+      const gallery = await collectGalleryImages(id);
+      if (Array.isArray(gallery) && gallery.length > 0) {
+        div.insertAdjacentHTML(
+          'beforeend',
+          '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>'
+        );
+        const container = document.getElementById('gallery');
+
+        for (const src of gallery) {
+          const img = document.createElement('img');
+          img.className = 'zoomable';
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.alt = '';
+          img.style.cssText = 'width:160px;height:auto;border:1px solid #ccc;border-radius:4px;cursor:zoom-in;opacity:0;';
+          img.onload  = () => { img.style.opacity = '1'; };
+          img.onerror = () => { img.remove(); };
+          img.src     = src;
+          container.appendChild(img);
+        }
+      }
     }
 
-    // ----- ライトボックス本体 -----
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightbox-img');
+    /* === Lightbox Core（共通） === */
+    const lb   = document.getElementById('lightbox');
+    const lbImg= document.getElementById('lightbox-img');
 
-    function openLightbox(src, alt){
-      // 画像セット
-      lbImg.src = src;
-      lbImg.alt = alt || '';
+    let __scrollY = 0;
+    let __locked  = false;
 
-      // スクロール位置を保持してロック（ジャンプしない）
+    /* 開く時のスクロール固定は html に対して行う */
+    function lockScroll(){
+      if (__locked) return;
       __scrollY = window.scrollY || window.pageYOffset;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${__scrollY}px`;
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-      document.body.style.width = '100%';
+      const de = document.documentElement;
+      de.style.position = 'fixed';
+      de.style.top = `-${__scrollY}px`;
+      de.style.left = '0';
+      de.style.right = '0';
+      de.style.width = '100%';
+      __locked = true;
+    }
+    function unlockScroll(){
+      if (!__locked) return;
+      const de = document.documentElement;
+      de.style.position = '';
+      de.style.top = '';
+      de.style.left = '';
+      de.style.right = '';
+      de.style.width = '';
+      window.scrollTo(0, __scrollY);  // 開いた地点へ復帰
+      __locked = false;
+    }
 
+    function openLightbox(src, alt=''){
+      if (lb.hidden) lockScroll();  // 初回のみロック
+      lbImg.src = src;
+      lbImg.alt = alt;
       lb.hidden = false;
     }
-
     function closeLightbox(){
       lb.hidden = true;
       lbImg.src = '';
-
-      // ロック解除して元の位置に戻す
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.width = '';
-
-      window.scrollTo(0, __scrollY);  // ← 開いた地点へ復帰
+      unlockScroll();
     }
 
-    // 画像クリックで拡大（zoomable に対するイベント委譲）
-    document.addEventListener('click', (e) => {
-      const img = e.target.closest('img.zoomable');
-      if (img) openLightbox(img.src, img.alt);
-    });
-    // オーバーレイクリック/ESCで閉じる
+    /* 閉じ方の統一：背景クリック、画像タップ、ESC */
     lb.addEventListener('click', closeLightbox);
-    document.addEventListener('keydown', (e) => {
-      if (!lb.hidden && e.key === 'Escape') closeLightbox();
-    });
+    lbImg.addEventListener('click', (e)=>{ e.stopPropagation(); closeLightbox(); });
 
+    /* 起動 */
     main();
   </script>
+
   <div style="margin-top:20px;">
     <a id="reportLink" target="_blank">このページの誤りを報告</a>
   </div>
 
+  <script>
+    /* zoomable 画像のクリック委譲（ジャケット＆ギャラリーを開く） */
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img.zoomable');
+      if (!img) return;
+      openLightbox(img.src, img.alt || '');
+    });
+  </script>
+
   <script src="settings.js"></script>
   <script>
-  // Google Form の URL を生成（現在のページURLを自動付与）
-  const formURL =
-    `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
-    + encodeURIComponent(location.href);
-
-  // a タグにセット
-  document.getElementById("reportLink").href = formURL;
+    // Google Form の URL を生成（現在のページURLを自動付与）
+    const formURL =
+      `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
+      + encodeURIComponent(location.href);
+    document.getElementById("reportLink").href = formURL;
   </script>
 </body>
 </html>
+``

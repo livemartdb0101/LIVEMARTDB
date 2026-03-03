@@ -9,33 +9,34 @@
     table { border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 4px 8px; white-space: nowrap; }
     img { max-width: 300px; border: 1px solid #ccc; margin: 10px 0; }
-    /* クリック拡大用ライトボックス */
+
+    /* 横ズレ抑制（対応ブラウザのみ・安全） */
+    html { scrollbar-gutter: stable; }
+
+    /* ライトボックス（共通） */
     .lightbox[hidden]{ display:none; }
-    /* 画面いっぱいで固定。ページ幅が何pxでも無視して“物理画面”基準にする */
     .lightbox{
       position: fixed;
       inset: 0;
       width: 100vw;
-      height: 100dvh;                 /* モバイルのツールバー出入りに追従 */
+      height: 100dvh;     /* モバイルのツールバー出入りに追従 */
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(0,0,0,.8);
       cursor: zoom-out;
-      overscroll-behavior: contain;    /* 背景へのスクロール連鎖を防止 */
-      padding: 0;                      /* 余白で溢れないようゼロに */
+      overscroll-behavior: contain;  /* 背景へのスクロール連鎖を防止 */
+      padding: 0;
     }
-
-    /* 画像は“内接”で収める。スクロール不要・比率維持 */
     .lightbox img{
       width: 100%;
       height: 100%;
-      object-fit: contain;             /* 等比で画面内に収めるポイント */
-      max-width: none;                 /* 既存の max-* を無効化 */
+      object-fit: contain;  /* 等比で画面内に収める */
+      max-width: none;
       max-height: none;
-      box-shadow: none;                /* 影や枠が要るなら、その分だけ size を引く */
       border: none;
       background: #0000;
+      box-shadow: none;
     }
 
     /* ギャラリー（幅固定・比率維持） */
@@ -57,9 +58,12 @@
 <body>
   <a href="index.html">← 検索に戻る</a>
   <div id="content"></div>
+
+  <!-- Lightbox Overlay（共通） -->
   <div id="lightbox" class="lightbox" hidden>
     <img id="lightbox-img" alt="">
   </div>
+
     <script>
       function getId(){ const params=new URLSearchParams(location.search); return params.get('id'); }
 
@@ -104,7 +108,7 @@
         let html = '';
         html += `<h1>${mem.name}</h1>`;
 
-        // 画像 people_<id>.webp
+        // アー写画像 people_<id>.webp
         const imgPath = `image/people_${id}.webp`;
 
         html += `
@@ -216,22 +220,26 @@
         // ▼ ギャラリー表示関数（ライトボックスを流用）
         function openGalleryImage() {
           const src = currentGallery[currentIndex];
-          // ↓↓↓ ここを「openLightbox」に統一（overflow操作はしない）
-          openLightbox(src, '');
+          if (!lb.hidden) {          // 表示中は画像だけ差し替え
+            lbImg.src = src;
+            lbImg.alt = '';
+            return;
+          }
+          openLightbox(src, '');     // 初回のみ
         }
 
-        // ▼ 左右矢印キーで前後へ
-        document.addEventListener('keydown', (e) => {
-          if (lb.hidden) return;
-          if (e.key === 'ArrowRight' && currentIndex < currentGallery.length - 1) {
-            currentIndex++;
-            openGalleryImage();
-          }
-          if (e.key === 'ArrowLeft' && currentIndex > 0) {
-            currentIndex--;
-            openGalleryImage();
-          }
-        });
+        // // ▼ 左右矢印キーで前後へ
+        // document.addEventListener('keydown', (e) => {
+        //   if (lb.hidden) return;
+        //   if (e.key === 'ArrowRight' && currentIndex < currentGallery.length - 1) {
+        //     currentIndex++;
+        //     openGalleryImage();
+        //   }
+        //   if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        //     currentIndex--;
+        //     openGalleryImage();
+        //   }
+        // });
 
 
         // ▼ ここから追記：クリックで拡大
@@ -241,53 +249,72 @@
         }
       }
 
-      // ▼ ライトボックス本体（追記）
-      const lb = document.getElementById('lightbox');
-      const lbImg = document.getElementById('lightbox-img');
+      /* === Lightbox Core（共通） === */
+      const lb   = document.getElementById('lightbox');
+      const lbImg= document.getElementById('lightbox-img');
 
       let __scrollY = 0;
+      let __locked  = false;
 
-      function openLightbox(src, alt){
-        // 画像セット
-        lbImg.src = src;
-        lbImg.alt = alt || '';
-
-        // スクロール位置を保持してロック（ジャンプしない）
+      /* 開く時のスクロール固定は html に対して行う */
+      function lockScroll(){
+        if (__locked) return;
         __scrollY = window.scrollY || window.pageYOffset;
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${__scrollY}px`;
-        document.body.style.left = '0';
-        document.body.style.right = '0';
-        document.body.style.width = '100%';
-
-        lb.hidden = false;
+        const de = document.documentElement;
+        de.style.position = 'fixed';
+        de.style.top = `-${__scrollY}px`;
+        de.style.left = '0';
+        de.style.right = '0';
+        de.style.width = '100%';
+        __locked = true;
+      }
+      function unlockScroll(){
+        if (!__locked) return;
+        const de = document.documentElement;
+        de.style.position = '';
+        de.style.top = '';
+        de.style.left = '';
+        de.style.right = '';
+        de.style.width = '';
+        window.scrollTo(0, __scrollY);  // 開いた地点へ復帰
+        __locked = false;
       }
 
+      function openLightbox(src, alt=''){
+        if (lb.hidden) lockScroll();  // 初回のみロック
+        lbImg.src = src;
+        lbImg.alt = alt;
+        lb.hidden = false;
+      }
       function closeLightbox(){
         lb.hidden = true;
         lbImg.src = '';
-
-        // ロック解除して元の位置に戻す
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
-        document.body.style.width = '';
-
-        window.scrollTo(0, __scrollY);  // ← 開いた地点へ復帰
+        unlockScroll();
       }
 
-      // クリック/ESCで閉じる
+      /* 閉じ方の統一：背景クリック、画像タップ、ESC */
       lb.addEventListener('click', closeLightbox);
-      document.addEventListener('keydown', (e)=>{
-        if (!lb.hidden && e.key === 'Escape') closeLightbox();
-      });
+      lbImg.addEventListener('click', (e)=>{ e.stopPropagation(); closeLightbox(); });
+      document.addEventListener('keydown', (e)=>{ if (!lb.hidden && e.key === 'Escape') closeLightbox(); });
+
+      /* 以降のページ固有コードから openLightbox()/closeLightbox() を呼べばOK */
+
+
 
       main();
     </script>
   <div style="margin-top:20px;">
     <a id="reportLink" target="_blank">このページの誤りを報告</a>
   </div>
+
+  <script>
+    // zoomable 画像のクリック委譲（フライヤーなどを開く）
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img.zoomable');
+      if (!img) return;
+      openLightbox(img.src, img.alt || '');
+    });
+  </script>
 
   <script src="settings.js"></script>
   <script>

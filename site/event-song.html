@@ -9,36 +9,37 @@
     h1 { margin-bottom: 0; }
     table { border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 4px 8px; white-space: nowrap; }
-    /* クリック拡大用ライトボックス */
+
+    /* 横ズレ抑制（対応ブラウザのみ・安全） */
+    html { scrollbar-gutter: stable; }
+
+    /* ライトボックス（共通） */
     .lightbox[hidden]{ display:none; }
     .lightbox{
       position: fixed;
       inset: 0;
       width: 100vw;
-      height: 100dvh;                 /* モバイルのツールバー出入りに追従 */
+      height: 100dvh;     /* モバイルのツールバー出入りに追従 */
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(0,0,0,.8);
       cursor: zoom-out;
-      overscroll-behavior: contain;    /* 背景へのスクロール連鎖を防止 */
-      padding: 0;                      /* 余白で溢れないようゼロに */
+      overscroll-behavior: contain;  /* 背景へのスクロール連鎖を防止 */
+      padding: 0;
     }
-
-    /* 画像は“内接”で収める。スクロール不要・比率維持 */
     .lightbox img{
       width: 100%;
       height: 100%;
-      object-fit: contain;             /* 等比で画面内に収めるポイント */
-      max-width: none;                 /* 既存の max-* を無効化 */
+      object-fit: contain;  /* 等比で画面内に収める */
+      max-width: none;
       max-height: none;
-      box-shadow: none;                /* 影や枠が要るなら、その分だけ size を引く */
       border: none;
       background: #0000;
+      box-shadow: none;
     }
-
-
   </style>
+
   <style>
     /* Lineup は border なし */
     table.lineup-table {
@@ -50,232 +51,234 @@
       padding: 2px 6px;
     }
   </style>
-
 </head>
 <body>
   <a id="back-event" href="#">← イベントに戻る</a> |
   <a id="back-song" href="#">曲の全履歴を見る</a>
 
   <div id="content"></div>
+
+  <!-- Lightbox Overlay（共通） -->
   <div id="lightbox" class="lightbox" hidden>
     <img id="lightbox-img" alt="">
   </div>
 
-    <script>
+  <script>
     function getParams() {
-        const p = new URLSearchParams(location.search);
-        return {
+      const p = new URLSearchParams(location.search);
+      return {
         event: p.get("event"),
-        song: p.get("song"),
-        seq: p.get("seq")
-        };
+        song:  p.get("song"),
+        seq:   p.get("seq")
+      };
     }
 
     async function fileExists(url) {
-    try {
+      try {
         const r = await fetch(url, { method:'HEAD', cache:'no-cache' });
         return r.ok;
-    } catch { return false; }
+      } catch { return false; }
     }
 
-    /** このイベント×曲順のギャラリーを収集 */
-    async function collectEventSongGallery(eventId, seq) {
-    const urls = [];
-    for (let i = 1; i <= 25; i++) {
+    // === このイベント×曲順のギャラリーを収集（連番 1..25） ===
+    async function collectGalleryImages(eventId, seq) {
+      const urls = [];
+      for (let i = 1; i <= 25; i++) {
         const u = `image/event_song_${eventId}_${seq}_${i}.webp`;
         if (await fileExists(u)) urls.push(u); else break;
+      }
+      return urls;
     }
-    return urls;
+
+    // 軽いエスケープ
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, m => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+      }[m]));
     }
 
     async function main() {
-        const { event, song, seq } = getParams();
-        if (!event || !song) return;
+      const { event, song, seq } = getParams();
+      if (!event || !song) return;
 
-        // イベント詳細を取得
-        const ev = await fetch(`data/event/${event}.json`).then(r => r.json());
+      // イベント詳細を取得
+      const ev = await fetch(`data/event/${encodeURIComponent(event)}.json`).then(r => r.json());
 
-        // 対象の曲を探す
-        const s = ev.setlist.find(x => x.song_id == song && x.seq == seq);
-        if (!s) {
+      // 対象の曲を探す
+      const s = (ev.setlist || []).find(x => String(x.song_id) === String(song) && String(x.seq) === String(seq));
+      if (!s) {
         document.getElementById("content").innerHTML = "<p>データが見つかりません。</p>";
         return;
-        }
+      }
 
-        // 曲名
-        const title = s.song_title;
+      // 曲名
+      const title = s.song_title;
 
-        // この曲の全出演イベント（song/{id}.json）
-        const songDetail = await fetch(`data/song/${song}.json`).then(r => r.json());
-        const otherEvents = (songDetail.events || []).filter(e => e.event_id != Number(event));
+      // この曲の全出演イベント（song/{id}.json）
+      const songDetail   = await fetch(`data/song/${encodeURIComponent(song)}.json`).then(r => r.json());
+      const otherEvents  = (songDetail.events || []).filter(e => e.event_id != Number(event));
 
+      // performer（Lineup と同じ2列テーブルで整形）
+      let perf = "";
+      if (s.performer && s.performer.length) {
+        perf += `<table class="lineup-table">`;
+        s.performer.forEach(p => {
+          const role = p.position ? `${p.role}（${p.position}）` : p.role;
+          perf += `
+            <tr>
+              <td>${escapeHtml(role)}</td>
+              <td>：<a href="people.html?id=${encodeURIComponent(p.person_id)}">${escapeHtml(p.name)}</a></td>
+            </tr>`;
+        });
+        perf += `</table>`;
+      }
 
-        // performer（Lineup と同じ2列テーブルで整形）
-        let perf = "";
-        if (s.performer && s.performer.length) {
-          perf += `<table class="lineup-table">`;
-          s.performer.forEach(p => {
-            const role = p.position
-              ? `${p.role}（${p.position}）`
-              : p.role;
+      // HTML 出力
+      let html = "";
+      html += `<h1>${escapeHtml(title)}</h1>`;
 
-            perf += `
-              <tr>
-                <td>${role}</td>
-                <td>：<a href="people.html?id=${p.person_id}">${p.name}</a></td>
-              </tr>`;
-          });
-          perf += `</table>`;
-        }
+      // タイトルにイベント詳細へのリンク
+      const eventLink = (ev?.id != null)
+        ? `<a href="event.html?id=${encodeURIComponent(ev.id)}">${escapeHtml(ev.title)}</a>`
+        : escapeHtml(ev.title || "");
 
-        // （任意）XSS対策の軽いエスケープ
-        function escapeHtml(s) {
-          return String(s ?? '').replace(/[&<>"']/g, m => ({
-            '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
-          }[m]));
-        }
+      // 会場名に会場詳細へのリンク（venue_id があればリンク、なければ文字だけ）
+      const venueLink = (ev?.venue_id != null)
+        ? `<a href="venue.html?id=${encodeURIComponent(ev.venue_id)}">${escapeHtml(ev.venue || "")}</a>`
+        : escapeHtml(ev.venue || "");
 
+      html += `<p>${escapeHtml(ev.date)} 「${eventLink}」の ${escapeHtml(seq)} 曲目</p>`;
+      html += `<p>会場: ${venueLink}</p>`;
+      html += `<p>Version: ${escapeHtml(s.version || "")}</p>`;
+      html += `<p>Note: ${escapeHtml(s.note || "")}</p>`;
 
-        // HTML 出力
-        let html = "";
-        html += `<h1>${escapeHtml(title)}</h1>`;
+      html += `<h3>Performer</h3>`;
+      html += `<p>${perf}</p>`;
 
-        // ▼ ここ：タイトルにイベント詳細へのリンク
-        const eventLink = ev?.id != null
-          ? `<a href="event.html?id=${ev.id}">${escapeHtml(ev.title)}</a>`
-          : escapeHtml(ev.title || "");
-
-        // ▼ ここ：会場名に会場詳細へのリンク（venue_id があればリンク、なければ文字だけ）
-        const venueLink = ev?.venue_id != null
-          ? `<a href="venue.html?id=${ev.venue_id}">${escapeHtml(ev.venue || "")}</a>`
-          : escapeHtml(ev.venue || "");
-
-        // html += `<h1>${title}</h1>`;
-        html += `<p>${escapeHtml(ev.date)} 「${eventLink}」の ${escapeHtml(seq)} 曲目</p>`;
-        html += `<p>会場: ${venueLink}</p>`;
-        html += `<p>Version: ${s.version || ""}</p>`;
-        html += `<p>Note: ${s.note || ""}</p>`;
-
-        html += `<h3>Performer</h3>`;
-        html += `<p>${perf}</p>`;
-
-        // ★ この曲の他の出演イベント（表形式）
-        if (otherEvents.length > 0) {
+      // この曲の他の出演イベント（表形式）
+      if (otherEvents.length > 0) {
         html += `<h3>この曲の他の出演イベント</h3>`;
         html += `<table>
-            <tr>
+          <tr>
             <th>日付</th>
             <th>イベント</th>
             <th>会場</th>
             <th>#</th>
-            </tr>`;
-
+          </tr>`;
         otherEvents.forEach(e => {
-            html += `
+          html += `
             <tr>
-                <td>${e.date}</td>
-                <td><a href="event.html?id=${e.event_id}">${e.title}</a></td>
-                <td><a href="venue.html?id=${e.venue_id}">${e.venue}</a></td>
-                <td><a href="event-song.html?event=${e.event_id}&song=${song}&seq=${e.seq}">${e.seq}</a></td>
+              <td>${escapeHtml(e.date)}</td>
+              <td><a href="event.html?id=${encodeURIComponent(e.event_id)}">${escapeHtml(e.title)}</a></td>
+              <td><a href="venue.html?id=${encodeURIComponent(e.venue_id)}">${escapeHtml(e.venue)}</a></td>
+              <td><a href="event-song.html?event=${encodeURIComponent(e.event_id)}&song=${encodeURIComponent(song)}&seq=${encodeURIComponent(e.seq)}">${escapeHtml(e.seq)}</a></td>
             </tr>`;
         });
-
         html += `</table>`;
-        }
+      }
 
-        document.getElementById("content").innerHTML = html;
+      const content = document.getElementById("content");
+      content.innerHTML = html;
 
-        // ▼ ここからギャラリーを描画
-        const gallery = await collectEventSongGallery(event, seq);
-        if (gallery.length > 0) {
-        const host = document.getElementById("content");
-
-        // コンテナを先に挿す
-        host.insertAdjacentHTML(
-            'beforeend',
-            '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>'
+      // ▼ ギャラリーを描画（ある時だけ見出し＋一覧）
+      const gallery = await collectGalleryImages(event, seq);
+      if (Array.isArray(gallery) && gallery.length > 0) {
+        content.insertAdjacentHTML(
+          'beforeend',
+          '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>'
         );
         const container = document.getElementById('gallery');
 
-        // 画像を生成→いったん透明で挿す→onloadで可視化、onerrorで除去
         for (const src of gallery) {
-            const img = document.createElement('img');
-            img.loading = 'lazy';
-            img.decoding = 'async';
-            img.alt = '';
-            img.style.cssText = 'width:160px;height:auto;border:1px solid #ccc;border-radius:4px;cursor:zoom-in;opacity:0;';
-
-            img.onload = () => { img.style.opacity = '1'; };
-            img.onerror = () => { img.remove(); };
-            img.addEventListener('click', () => openLightbox(src, ''));
-
-            container.appendChild(img);  // 先に差し込む
-            img.src = src;               // 最後に src をセット
+          const img = document.createElement('img');
+          img.className = 'zoomable';
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.alt = '';
+          img.style.cssText = 'width:160px;height:auto;border:1px solid #ccc;border-radius:4px;cursor:zoom-in;opacity:0;';
+          img.onload  = () => { img.style.opacity = '1'; };
+          img.onerror = () => { img.remove(); };
+          img.src = src;
+          container.appendChild(img);
         }
-        }
+      }
 
-
-        // 戻りリンク
-        document.getElementById("back-event").href = `event.html?id=${event}`;
-        document.getElementById("back-song").href = `song.html?id=${song}`;
+      // 戻りリンク
+      document.getElementById("back-event").href = `event.html?id=${encodeURIComponent(event)}`;
+      document.getElementById("back-song").href  = `song.html?id=${encodeURIComponent(song)}`;
     }
 
-        // ▼ ライトボックス本体（追記）
-        const lb = document.getElementById('lightbox');
-        const lbImg = document.getElementById('lightbox-img');
+    /* === Lightbox Core（共通） === */
+    const lb   = document.getElementById('lightbox');
+    const lbImg= document.getElementById('lightbox-img');
 
-        function openLightbox(src, alt){
-          // 画像セット
-          lbImg.src = src;
-          lbImg.alt = alt || '';
+    let __scrollY = 0;
+    let __locked  = false;
 
-          // スクロール位置を保持してロック（ジャンプしない）
-          __scrollY = window.scrollY || window.pageYOffset;
-          document.body.style.position = 'fixed';
-          document.body.style.top = `-${__scrollY}px`;
-          document.body.style.left = '0';
-          document.body.style.right = '0';
-          document.body.style.width = '100%';
+    /* 開く時のスクロール固定は html に対して行う */
+    function lockScroll(){
+      if (__locked) return;
+      __scrollY = window.scrollY || window.pageYOffset;
+      const de = document.documentElement;
+      de.style.position = 'fixed';
+      de.style.top = `-${__scrollY}px`;
+      de.style.left = '0';
+      de.style.right = '0';
+      de.style.width = '100%';
+      __locked = true;
+    }
+    function unlockScroll(){
+      if (!__locked) return;
+      const de = document.documentElement;
+      de.style.position = '';
+      de.style.top = '';
+      de.style.left = '';
+      de.style.right = '';
+      de.style.width = '';
+      window.scrollTo(0, __scrollY);  // 開いた地点へ復帰
+      __locked = false;
+    }
 
-          lb.hidden = false;
-        }
+    function openLightbox(src, alt=''){
+      if (lb.hidden) lockScroll();  // 初回のみロック
+      lbImg.src = src;
+      lbImg.alt = alt;
+      lb.hidden = false;
+    }
+    function closeLightbox(){
+      lb.hidden = true;
+      lbImg.src = '';
+      unlockScroll();
+    }
 
-        function closeLightbox(){
-          lb.hidden = true;
-          lbImg.src = '';
+    /* 閉じ方の統一：背景クリック、画像タップ、ESC */
+    lb.addEventListener('click', closeLightbox);
+    lbImg.addEventListener('click', (e)=>{ e.stopPropagation(); closeLightbox(); });
 
-          // ロック解除して元の位置に戻す
-          document.body.style.position = '';
-          document.body.style.top = '';
-          document.body.style.left = '';
-          document.body.style.right = '';
-          document.body.style.width = '';
-
-          window.scrollTo(0, __scrollY);  // ← 開いた地点へ復帰
-        }
-
-        // クリック/ESCで閉じる
-        lb.addEventListener('click', closeLightbox);
-        document.addEventListener('keydown', (e)=>{
-        if (!lb.hidden && e.key === 'Escape') closeLightbox();
-        });
-
+    /* 起動 */
     main();
-    </script>
+  </script>
 
-  <div style="margin-top:20px;">
-    <a id="reportLink" target="_blank">このページの誤りを報告</a>
-  </div>
+<div style="margin-top:20px;">
+  <a id="reportLink" target="_blank">このページの誤りを報告</a>
+</div>
+
+<script>
+  // zoomable 画像のクリック委譲（ギャラリーを開く）
+  document.addEventListener('click', (e) => {
+    const img = e.target.closest('img.zoomable');
+    if (!img) return;
+    openLightbox(img.src, img.alt || '');
+  });
+  </script>
 
   <script src="settings.js"></script>
-  <script>
+<script>
   // Google Form の URL を生成（現在のページURLを自動付与）
   const formURL =
     `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
     + encodeURIComponent(location.href);
-
-  // a タグにセット
   document.getElementById("reportLink").href = formURL;
-  </script>
+</script>
 </body>
 </html>

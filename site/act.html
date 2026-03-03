@@ -9,7 +9,6 @@
     table { border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 4px 8px; white-space: nowrap; }
 
-
     /* 本文用（フライヤーなど） */
     .content-img {
       max-width: 300px;
@@ -17,32 +16,33 @@
       margin: 10px 0;
     }
 
-    /* ライトボックス */
+    /* 横ズレ抑制（対応ブラウザのみ・安全） */
+    html { scrollbar-gutter: stable; }
+
+    /* ライトボックス（共通） */
     .lightbox[hidden]{ display:none; }
     .lightbox{
       position: fixed;
       inset: 0;
       width: 100vw;
-      height: 100dvh;                 /* モバイルのツールバー出入りに追従 */
+      height: 100dvh;     /* モバイルのツールバー出入りに追従 */
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(0,0,0,.8);
       cursor: zoom-out;
-      overscroll-behavior: contain;    /* 背景へのスクロール連鎖を防止 */
-      padding: 0;                      /* 余白で溢れないようゼロに */
+      overscroll-behavior: contain;  /* 背景へのスクロール連鎖を防止 */
+      padding: 0;
     }
-
-    /* 画像は“内接”で収める。スクロール不要・比率維持 */
     .lightbox img{
       width: 100%;
       height: 100%;
-      object-fit: contain;             /* 等比で画面内に収めるポイント */
-      max-width: none;                 /* 既存の max-* を無効化 */
+      object-fit: contain;  /* 等比で画面内に収める */
+      max-width: none;
       max-height: none;
-      box-shadow: none;                /* 影や枠が要るなら、その分だけ size を引く */
       border: none;
       background: #0000;
+      box-shadow: none;
     }
 
     /* ギャラリー（幅固定・比率維持） */
@@ -50,21 +50,20 @@
       display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;
     }
     #gallery img {
-      width: 160px;     /* ★ 幅基準（好みで 120/150/180 など） */
-      height: auto;     /* ★ アスペクト比維持 */
+      width: 160px;     /* 幅基準（好みで 120/150/180 など） */
+      height: auto;     /* アスペクト比維持 */
       border: 1px solid #ccc;
       border-radius: 4px;
       cursor: pointer;
       transition: opacity .2s ease;
     }
-
   </style>
 </head>
 <body>
   <a href="index.html">← 検索に戻る</a>
   <div id="content"></div>
 
-  <!-- ライトボックス（拡大画像表示用） -->
+  <!-- Lightbox Overlay（共通） -->
   <div id="lightbox" class="lightbox" hidden>
     <img id="lightbox-img" alt="">
   </div>
@@ -89,11 +88,11 @@
       return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
 
-
+    // ギャラリー画像の収集（act_<id>_1.webp ... act_<id>_25.webp を順に確認）
     async function collectGalleryImages(id) {
-      const base = 'image';               // 今の構造に合わせてある
+      const base = 'image';
       const list = [];
-      for (let i = 1; i <= 25; i++) {     // 50枚まで連番チェック
+      for (let i = 1; i <= 25; i++) {     // 25枚まで連番チェック
         const path = `${base}/act_${id}_${i}.webp`;
         try {
           const r = await fetch(path, { method: 'HEAD' });
@@ -113,19 +112,20 @@
       const act = await fetch(`data/act/${id}.json`).then(r => r.json());
       const div = document.getElementById('content');
 
-        let html = '';
-      html += `<h1>${act.name}</h1>`;
+      // --- 基本情報 ---
+      let html = '';
+      html += `<h1>${escapeHtml(act.name)}</h1>`;
 
       // フライヤー画像（act_<id>.webp）存在しなければ非表示
       const imgPath = `image/act_${id}.webp`;
       html += `
         <p>
-          <img class="zoomable content-img" src="${imgPath}" alt="${act.name}"
+          <img class="zoomable content-img" src="${imgPath}" alt="${escapeHtml(act.name)}"
                onerror="this.style.display='none'">
         </p>
       `;
 
-      // ▼ SNS 表示（people と同じ）
+      // SNS
       const snsList = [
         ['HP',        act.url],
         ['X',         act.x],
@@ -135,15 +135,11 @@
         ['YouTube',   act.youtube],
         ['TikTok',    act.tiktok],
       ];
-
       snsList.forEach(([label, value]) => {
         const u = (value ?? '').trim();
         if (!u) return;
-
         const url = normalizeUrl(u);
-        if (!url) return;  // 不正URLはスキップ（後述の normalizeUrl を使用）
-
-        // リンクテキストに label を使う
+        if (!url) return;
         html += `<p><a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHtml(label)}</a></p>`;
       });
 
@@ -154,9 +150,9 @@
           <tr><th>日付</th><th>イベント</th><th>形態</th></tr>`;
         act.events.forEach(ev => {
           html += `<tr>
-            <td>${ev.date}</td>
-            <td><a href="event.html?id=${ev.event_id}">${ev.title}</a></td>
-            <td>${ev.form}</td>
+            <td>${escapeHtml(ev.date)}</td>
+            <td><a href="event.html?id=${ev.event_id}">${escapeHtml(ev.title)}</a></td>
+            <td>${escapeHtml(ev.form || '')}</td>
           </tr>`;
         });
         html += `</table>`;
@@ -164,125 +160,84 @@
         html += `<p>出演イベントなし</p>`;
       }
 
-      document.getElementById('content').innerHTML = html;
-      // ※ クリックハンドラは下のイベント委譲で一括対応
+      div.innerHTML = html;
 
-
-      // ▼ ギャラリー画像一覧
+      // --- ギャラリー（あるときだけ見出し＋一覧を表示） ---
       const gallery = await collectGalleryImages(id);
-      if (gallery.length > 0) {
-        // コンテナを先に挿入（wrapでOK。枠ゴースト防止はJS側で制御）
+      if (Array.isArray(gallery) && gallery.length > 0) {
+        // 見出し＋コンテナ
         div.insertAdjacentHTML(
           'beforeend',
-          '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;"></div>'
+          '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>'
         );
         const container = document.getElementById('gallery');
 
-        // 画像：いったん透明で挿入 → onloadで可視化、onerrorで削除
-        gallery.forEach((src, idx) => {
+        // サムネ生成（.zoomable を付与）
+        for (const src of gallery) {
           const img = document.createElement('img');
+          img.className = 'zoomable';
           img.loading = 'lazy';
           img.decoding = 'async';
           img.alt = '';
-          img.dataset.idx = String(idx); // スライド用にインデックス保持
-          img.style.opacity = '0'; // フェードインだけ
+          img.style.cssText = 'width:160px;height:auto;border:1px solid #ccc;border-radius:4px;cursor:zoom-in;opacity:0;';
 
-          // ロード成功 → 表示
-          img.onload = () => { img.style.opacity = '1'; };
-          // 失敗 → DOMから除去（= 枠ゴーストなし）
+          img.onload  = () => { img.style.opacity = '1'; };
           img.onerror = () => { img.remove(); };
+          img.src = src;
 
-          // クリック → 既存のライトボックス＋スライドを利用
-          img.addEventListener('click', () => {
-            currentGallery = gallery;                // 既存の変数を更新
-            currentIndex   = Number(img.dataset.idx);
-            openGalleryImage();                      // 既存の関数を呼ぶ（lbを開く）
-          });
-
-          container.appendChild(img); // 先に差し込む
-          img.src = src;              // 最後にsrcセット（onload取りこぼし防止）
-        });
-      }
-
-      // ▼ ギャラリー用の変数
-      let currentGallery = [];
-      let currentIndex = 0;
-
-      // ▼ ギャラリー表示関数（ライトボックスを流用）
-      function openGalleryImage() {
-        const src = currentGallery[currentIndex];
-        // ↓↓↓ ここを「openLightbox」に統一（overflow操作はしない）
-        openLightbox(src, '');
-      }
-
-
-      // ▼ 左右矢印キーで前後へ
-      document.addEventListener('keydown', (e) => {
-        if (lb.hidden) return;
-        if (e.key === 'ArrowRight' && currentIndex < currentGallery.length - 1) {
-          currentIndex++;
-          openGalleryImage();
+          container.appendChild(img);
         }
-        if (e.key === 'ArrowLeft' && currentIndex > 0) {
-          currentIndex--;
-          openGalleryImage();
-        }
-      });
-
+      }
     }
 
+    /* === Lightbox Core（共通） === */
+    const lb   = document.getElementById('lightbox');
+    const lbImg= document.getElementById('lightbox-img');
 
+    let __scrollY = 0;
+    let __locked  = false;
 
-
-
-
-
-
-    // ----- ライトボックス本体 -----
-    const lb = document.getElementById('lightbox');
-    const lbImg = document.getElementById('lightbox-img');
-
-    function openLightbox(src, alt){
-      // 画像セット
-      lbImg.src = src;
-      lbImg.alt = alt || '';
-
-      // スクロール位置を保持してロック（ジャンプしない）
+    /* 開く時のスクロール固定は html に対して行う */
+    function lockScroll(){
+      if (__locked) return;
       __scrollY = window.scrollY || window.pageYOffset;
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${__scrollY}px`;
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-      document.body.style.width = '100%';
+      const de = document.documentElement;
+      de.style.position = 'fixed';
+      de.style.top = `-${__scrollY}px`;
+      de.style.left = '0';
+      de.style.right = '0';
+      de.style.width = '100%';
+      __locked = true;
+    }
+    function unlockScroll(){
+      if (!__locked) return;
+      const de = document.documentElement;
+      de.style.position = '';
+      de.style.top = '';
+      de.style.left = '';
+      de.style.right = '';
+      de.style.width = '';
+      window.scrollTo(0, __scrollY);  // 開いた地点へ復帰
+      __locked = false;
+    }
 
+    function openLightbox(src, alt=''){
+      if (lb.hidden) lockScroll();  // 初回のみロック
+      lbImg.src = src;
+      lbImg.alt = alt;
       lb.hidden = false;
     }
-
     function closeLightbox(){
       lb.hidden = true;
       lbImg.src = '';
-
-      // ロック解除して元の位置に戻す
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.width = '';
-
-      window.scrollTo(0, __scrollY);  // ← 開いた地点へ復帰
+      unlockScroll();
     }
 
-    // // 画像クリックで拡大（zoomable に対するイベント委譲）
-    document.addEventListener('click', (e) => {
-      const img = e.target.closest('img.zoomable');
-      if (img) openLightbox(img.src, img.alt);
-    });
-    // オーバーレイクリック/ESCで閉じる
+    /* 閉じ方の統一：背景クリック、画像タップ、ESC */
     lb.addEventListener('click', closeLightbox);
-    document.addEventListener('keydown', (e) => {
-      if (!lb.hidden && e.key === 'Escape') closeLightbox();
-    });
+    lbImg.addEventListener('click', (e)=>{ e.stopPropagation(); closeLightbox(); });
 
+    /* 起動 */
     main();
   </script>
 
@@ -290,15 +245,22 @@
     <a id="reportLink" target="_blank">このページの誤りを報告</a>
   </div>
 
+  <script>
+    /* zoomable 画像のクリック委譲（フライヤー＆ギャラリーを開く） */
+    document.addEventListener('click', (e) => {
+      const img = e.target.closest('img.zoomable');
+      if (!img) return;
+      openLightbox(img.src, img.alt || '');
+    });
+  </script>
+
   <script src="settings.js"></script>
   <script>
-  // Google Form の URL を生成（現在のページURLを自動付与）
-  const formURL =
-    `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
-    + encodeURIComponent(location.href);
-
-  // a タグにセット
-  document.getElementById("reportLink").href = formURL;
+    // Google Form の URL を生成（現在のページURLを自動付与）
+    const formURL =
+      `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url&entry.${ENTRY_ID}=`
+      + encodeURIComponent(location.href);
+    document.getElementById("reportLink").href = formURL;
   </script>
 </body>
 </html>
