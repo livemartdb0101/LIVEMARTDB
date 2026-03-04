@@ -5,39 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Venue</title>
   <style>
-    body { font-family: system-ui, sans-serif; overflow-x: auto; margin: 20px; }
+    /* body { font-family: system-ui, sans-serif; overflow-x: auto; margin: 0; } */
+    body { font-family: system-ui, sans-serif; margin: 0; }
     table { border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 4px 8px; white-space: nowrap; }
     img { max-width: 300px; border: 1px solid #ccc; margin: 10px 0; }
-
+    #content { margin: 20px;}
     /* 横ズレ抑制（対応ブラウザのみ・安全） */
-    html { scrollbar-gutter: stable; }
+    html, body { margin: 0 !important; }
 
-    /* ライトボックス（共通） */
-    .lightbox[hidden]{ display:none; }
+    .lightbox[hidden]{
+      display:none;
+    }
+
     .lightbox{
       position: fixed;
-      inset: 0;
+
+      top: 0;
+      left: 0;
+
       width: 100vw;
-      height: 100dvh;     /* モバイルのツールバー出入りに追従 */
+      height: 100%;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       background: rgba(0,0,0,.8);
-      cursor: zoom-out;
-      overscroll-behavior: contain;  /* 背景へのスクロール連鎖を防止 */
-      padding: 0;
+      z-index: 999999;
     }
+
     .lightbox img{
-      width: 100%;
-      height: 100%;
-      object-fit: contain;  /* 等比で画面内に収める */
-      max-width: none;
-      max-height: none;
+      margin: 0 !important;
       border: none;
-      background: #0000;
-      box-shadow: none;
+      max-width: 95vw;
+      max-height: 95vh;
+      display: block;
     }
+    body.lb-lock{
+      overflow: hidden;
+      touch-action: none;
+    }
+
+
   </style>
 </head>
 <body>
@@ -72,22 +82,41 @@
       }[m]));
     }
 
-    async function fileExists(url) {
-      try {
-        const r = await fetch(url, { method:'HEAD', cache:'no-cache' });
-        return r.ok;
-      } catch { return false; }
+
+    async function collectGalleryImages(id) {
+      const base = 'image';
+      const list = [];
+
+      for (let i = 1; i <= 25; i++) {
+        const path = `${base}/venue_${id}_${i}.webp`;
+        const ok = await imgExists(path, 4000); // タイムアウト4s（必要なら調整）
+        if (!ok) break; // 欠番以降は非表示の要件に合致
+        list.push(path);
+      }
+      return list;
     }
 
-    /* Venueギャラリー収集：image/venue_<id>_1.webp ... _25.webp */
-    async function collectGalleryImages(id) {
-      const urls = [];
-      for (let i = 1; i <= 25; i++) {
-        const u = `image/venue_${encodeURIComponent(id)}_${i}.webp`;
-        if (await fileExists(u)) urls.push(u); else break;
-      }
-      return urls;
+    function imgExists(src, timeoutMs = 4000) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        // ヒント（描画はあとで）：ブラウザ最適化
+        img.decoding = 'async';
+        img.loading = 'eager';        // ここでの存在確認は即時でOK
+        // 低優先度なら: img.fetchPriority = 'low'; // 必要なら
+
+        let ended = false;
+        const done = (v) => { if (!ended) { ended = true; resolve(v); } };
+
+        const to = setTimeout(() => done(false), timeoutMs);
+        img.onload = () => { clearTimeout(to); done(true); };
+        img.onerror = () => { clearTimeout(to); done(false); };
+
+        // キャッシュを効かせたいならキャッシュバスターは付けない
+        img.src = src;
+      });
     }
+
+
 
     async function main() {
       const { id } = getParams();
@@ -128,69 +157,103 @@
       html += `</table>`;
 
       document.getElementById("content").innerHTML = html;
+      const div = document.getElementById('content');
 
-      // ▼ ギャラリー（ある時だけ見出し＋一覧）
+
+      // ▼ ギャラリー画像一覧
       const gallery = await collectGalleryImages(id);
-      if (Array.isArray(gallery) && gallery.length > 0) {
-        const host = document.getElementById("content");
-        host.insertAdjacentHTML(
+      if (gallery.length > 0) {
+        // コンテナを先に挿入（wrapでOK。枠ゴースト防止はJS側で制御）
+        div.insertAdjacentHTML(
           'beforeend',
-          '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;"></div>'
+          '<h3>ギャラリー</h3><div id="gallery" style="display:flex;flex-wrap:wrap;gap:8px;"></div>'
         );
         const container = document.getElementById('gallery');
 
-        for (const src of gallery) {
+        // 画像：いったん透明で挿入 → onloadで可視化、onerrorで削除
+        gallery.forEach((src, idx) => {
           const img = document.createElement('img');
-          img.className = 'zoomable';
           img.loading = 'lazy';
           img.decoding = 'async';
           img.alt = '';
-          img.style.cssText = 'width:160px;height:auto;border:1px solid #ccc;border-radius:4px;cursor:zoom-in;opacity:0;';
-          img.onload  = () => { img.style.opacity = '1'; };
+          img.dataset.idx = String(idx); // スライド用にインデックス保持
+          img.style.opacity = '0'; // フェードインだけ
+
+          // ロード成功 → 表示
+          img.onload = () => { img.style.opacity = '1'; };
+          // 失敗 → DOMから除去（= 枠ゴーストなし）
           img.onerror = () => { img.remove(); };
-          img.src = src;
-          container.appendChild(img);
-        }
+
+          // クリック → 既存のライトボックス＋スライドを利用
+          img.addEventListener('click', () => {
+            __anchorEl     = img;
+            currentGallery = gallery;                // 既存の変数を更新
+            currentIndex   = Number(img.dataset.idx);
+            openGalleryImage();                      // 既存の関数を呼ぶ（lbを開く）
+          });
+
+          container.appendChild(img); // 先に差し込む
+          img.src = src;              // 最後にsrcセット（onload取りこぼし防止）
+        });
       }
+
+      // ▼ ギャラリー用の変数
+      let currentGallery = [];
+      let currentIndex = 0;
+
+      // ▼ ギャラリー表示関数（ライトボックスを流用）
+      function openGalleryImage() {
+        const src = currentGallery[currentIndex];
+        if (!lb.hidden) {          // 表示中は画像だけ差し替え
+          lbImg.src = src;
+          lbImg.alt = '';
+          return;
+        }
+        openLightbox(src, '');     // 初回のみ
+      }
+
+
+      // ▼ ここから追記：クリックで拡大
+      const img = document.getElementById('member-photo');
+      if (img) {
+        // img.addEventListener('click', () => openLightbox(img.src, img.alt));
+        img.addEventListener('click', () => { __anchorEl = img; openLightbox(img.src, img.alt); });
+      }
+
     }
 
+
+    /* 起動 */
+    main();
+
     /* === Lightbox Core（共通） === */
+
     const lb   = document.getElementById('lightbox');
     const lbImg= document.getElementById('lightbox-img');
 
-    let __scrollY = 0;
-    let __locked  = false;
+    let __locked = false;
 
-    /* 開く時のスクロール固定は html に対して行う */
     function lockScroll(){
       if (__locked) return;
-      __scrollY = window.scrollY || window.pageYOffset;
-      const de = document.documentElement;
-      de.style.position = 'fixed';
-      de.style.top = `-${__scrollY}px`;
-      de.style.left = '0';
-      de.style.right = '0';
-      de.style.width = '100%';
+
+      document.body.classList.add('lb-lock');
       __locked = true;
     }
+
     function unlockScroll(){
       if (!__locked) return;
-      const de = document.documentElement;
-      de.style.position = '';
-      de.style.top = '';
-      de.style.left = '';
-      de.style.right = '';
-      de.style.width = '';
-      window.scrollTo(0, __scrollY);  // 開いた地点へ復帰
+
+      document.body.classList.remove('lb-lock');
       __locked = false;
     }
 
     function openLightbox(src, alt=''){
-      if (lb.hidden) lockScroll();  // 初回のみロック
+      if (lb.hidden) lockScroll();
       lbImg.src = src;
       lbImg.alt = alt;
       lb.hidden = false;
     }
+
     function closeLightbox(){
       lb.hidden = true;
       lbImg.src = '';
@@ -201,8 +264,6 @@
     lb.addEventListener('click', closeLightbox);
     lbImg.addEventListener('click', (e)=>{ e.stopPropagation(); closeLightbox(); });
 
-    /* 起動 */
-    main();
   </script>
 
   <div style="margin-top:20px;">

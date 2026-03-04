@@ -476,18 +476,6 @@ class App(ttk.Frame):
         self._build_ui()
         self.refresh_events()
 
-    # def _build_ui(self):
-    #     # 上段：左右にイベント一覧 / イベント編集
-    #     top = ttk.Panedwindow(self, orient=tk.HORIZONTAL)
-    #     top.pack(fill=tk.BOTH, expand=True, padx=8, pady=3)
-
-    #     # 左：イベント一覧
-    #     left = ttk.Frame(top)
-    #     top.add(left)
-    #     # 右：イベント編集
-    #     right = ttk.Frame(top)
-    #     top.add(right)
-
     def _build_ui(self):
         # 上段：左右にイベント一覧 / イベント編集
         top = ttk.Panedwindow(self, orient=tk.HORIZONTAL)
@@ -496,7 +484,6 @@ class App(ttk.Frame):
         # 左：イベント一覧
         left = ttk.Frame(top)
         top.add(left)
-
         # 右：イベント編集
         right = ttk.Frame(top)
         top.add(right)
@@ -598,57 +585,29 @@ class App(ttk.Frame):
 
         # # --- 右ペイン（イベント編集）
 
-        # --- 右ペインを「縦のパネル分割」にする -----------------------
+        # --- 出演者（lineup）
+        lf = ttk.LabelFrame(right, text="出演者（イベント全体：lineup）")
+        lf.pack(fill=tk.BOTH, expand=False, padx=4, pady=2)
 
-        right_pw = tk.PanedWindow(
-            right,
-            orient=tk.VERTICAL,
-            sashrelief="raised",
-            sashwidth=6
-        )
-        right_pw.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
-
-
-        # # --- 出演者（lineup）
-        # lf = ttk.LabelFrame(right, text="出演者（イベント全体：lineup）")
-        # lf.pack(fill=tk.BOTH, expand=False, padx=4, pady=2)
-
-        # # 一覧
-        # self.lineup_tv = ttk.Treeview(
-        #     lf,
-        #     columns=("name","role"),   # ★ pos/guest を削除
-        #     show="headings",
-        #     height=3
-        # )
-
-        # --- 出演者（lineup）  ※親を right → right_pw に変更し、pack をやめる
-
-        # --- lineup パネル（変数名は lf ではなく lineup_lf にして他と衝突回避）
-        lineup_lf = ttk.LabelFrame(right_pw, text="出演者（イベント全体：lineup）")
-        right_pw.add(lineup_lf, minsize=120)
-
-        # （lineup 内部は親を lineup_lf に）
+        # 一覧
         self.lineup_tv = ttk.Treeview(
-            lineup_lf,
-            columns=("name","role"),
+            lf,
+            columns=("name","role"),   # ★ pos/guest を削除
             show="headings",
             height=3
         )
-
         self.lineup_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
-
-        # for c, t, w in [
-        #     ("name","名前",80),
-        #     ("role","役割",220),
-        # ]:
-        #     self.lineup_tv.heading(c, text=t)
-        #     self.lineup_tv.column(c, width=w, anchor="w")
+        for c, t, w in [
+            ("name","名前",80),
+            ("role","役割",220),
+        ]:
+            self.lineup_tv.heading(c, text=t)
+            self.lineup_tv.column(c, width=w, anchor="w")
         
-        # self.lineup_tv.bind("<<TreeviewSelect>>", self.on_lineup_select)
+        self.lineup_tv.bind("<<TreeviewSelect>>", self.on_lineup_select)
 
         # 追加フォーム
-        # ln_fr = ttk.Frame(lf); ln_fr.pack(fill=tk.X, padx=6, pady=2)
-        ln_fr = ttk.Frame(lineup_lf); ln_fr.pack(fill=tk.X, padx=6, pady=2)
+        ln_fr = ttk.Frame(lf); ln_fr.pack(fill=tk.X, padx=6, pady=2)
         ttk.Label(ln_fr, text="メンバー:").grid(row=0, column=0, sticky="e")
         self.ln_mem_cb = ttk.Combobox(ln_fr, values=self.people_names, width=20)
         self.ln_mem_cb.grid(row=0, column=1, sticky="w", padx=4)
@@ -659,8 +618,7 @@ class App(ttk.Frame):
         self.ln_role_cb.grid(row=0, column=3, sticky="w", padx=4)
 
         # # 追加フォーム
-        # btn_ln = ttk.Frame(lf); btn_ln.pack(fill=tk.X, padx=6, pady=(0,6))
-        btn_ln = ttk.Frame(lineup_lf); btn_ln.pack(fill=tk.X, padx=6, pady=(0,6))
+        btn_ln = ttk.Frame(lf); btn_ln.pack(fill=tk.X, padx=6, pady=(0,6))
         ttk.Button(btn_ln, text="追加", command=self.add_lineup).pack(side=tk.LEFT)
         ttk.Button(btn_ln, text="削除", command=self.del_lineup).pack(side=tk.LEFT, padx=6)
         ttk.Button(btn_ln, text="更新",  command=self.update_lineup).pack(side=tk.LEFT, padx=6)
@@ -673,47 +631,26 @@ class App(ttk.Frame):
 #        .pack(side=tk.LEFT, padx=12)
 
 
-        # # --- 対バン（bandsevent） ---
-        # bf = ttk.LabelFrame(right, text="対バン（bandsevent）")
-        # bf.pack(fill=tk.BOTH, expand=False, padx=4, pady=2)
+        # --- 対バン（bandsevent） ---
+        bf = ttk.LabelFrame(right, text="対バン（bandsevent）")
+        bf.pack(fill=tk.BOTH, expand=False, padx=4, pady=2)
 
-        # # 一覧
-        # self.band_tv = ttk.Treeview(
-        #     bf,
-        #     columns=("seq","act_name"),
-        #     show="headings",
-        #     height=3
-        # )
-        # self.band_tv.heading("seq", text="#")
-        # self.band_tv.heading("act_name", text="バンド名")
-        # self.band_tv.column("seq", width=10, anchor="w")
-        # self.band_tv.column("act_name", width=260, anchor="w")
-        # self.band_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
-
-        # --- 対バン（bandsevent） ※親を right → right_pw に変更し、pack をやめる
-
-        # --- band パネル（★ここで変数名 bf を維持★）
-        bf = ttk.LabelFrame(right_pw, text="対バン（bandsevent）")
-        right_pw.add(bf, minsize=120)
-
-        # （band の中身は親を bf に）
+        # 一覧
         self.band_tv = ttk.Treeview(
             bf,
             columns=("seq","act_name"),
             show="headings",
             height=3
         )
-
-
         self.band_tv.heading("seq", text="#")
         self.band_tv.heading("act_name", text="バンド名")
         self.band_tv.column("seq", width=10, anchor="w")
         self.band_tv.column("act_name", width=260, anchor="w")
         self.band_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
 
-        band_fr = ttk.Frame(bf)            # ← NameError を解消（親は bf）
+        # 追加フォーム
+        band_fr = ttk.Frame(bf)
         band_fr.pack(fill=tk.X, padx=6, pady=2)
-
 
         ttk.Label(band_fr, text="バンド名:").grid(row=0, column=0, sticky="e")
         self.band_cb = ttk.Combobox(
@@ -734,102 +671,31 @@ class App(ttk.Frame):
         ttk.Button(btn_bf, text="▼下へ", command=lambda: self.move_band("down")).pack(side=tk.LEFT, padx=6)
 
 
-        # sf_outer = ttk.Frame(right)
-        # sf_outer.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
+        sf_outer = ttk.Frame(right)
+        sf_outer.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
 
-        # # ヘッダー行（タイトル＋ボタン）
-        # header = ttk.Frame(sf_outer)
-        # header.pack(fill=tk.X)
-
-        # ttk.Label(header, text="セトリ編集（seqは常に1..N）",
-        #         font=("", 10)).pack(side=tk.LEFT)
-
-        # ttk.Button(
-        #     header,
-        #     text="出演者を一括適用",
-        #     command=self.apply_lineup_to_setlist
-        # ).pack(side=tk.RIGHT)
-
-        # # 中身のフレーム（元のsfの代わり）
-        # sf = ttk.Frame(sf_outer)
-        # sf.pack(fill=tk.BOTH, expand=True)
-
-        # # 1) Treeview 作成（器を作る）
-        # self.setlist_tv = ttk.Treeview(
-        #     sf, columns=("seq","title","section","version"),
-        #     show="headings", height=3
-        # )
-
-
-        # --- セトリ（setlist）ブロック：sf_outer をパネル化
-        # setlist（sf_outer 全体を 1 パネルに）
-        sf_outer = ttk.Frame(right_pw)
-        # sf_outer.pack(...) は削除
-        right_pw.add(sf_outer, minsize=100)
-
-
-
-        # ←←← ここに追記（sf_outer を add した直後）
-
-        def _init_right_panes(attempt=0):
-            # 実サイズが出るまで待つ
-            right_pw.update_idletasks()
-            h = right_pw.winfo_height()
-            if h < 400 and attempt < 20:   # 小さすぎると 0:0:残り になりやすい
-                self.after(50, lambda: _init_right_panes(attempt+1))
-                return
-
-            # 3:3:4 の比率（累積で置く）
-            a = 0.35  # lineup
-            b = 0.35  # bandsevent
-            h1 = int(h * a)         # 30%
-            h2 = int(h * b)         # 30%
-            # 残りは setlist（40%）
-
-            # 押し戻しを避けるために最小高さを少しだけ与える（ゼロは使わない）
-            try:
-                right_pw.paneconfigure(lineup_lf, minsize=80)
-                right_pw.paneconfigure(bf,        minsize=80)
-                right_pw.paneconfigure(sf_outer,  minsize=80)
-            except Exception:
-                pass
-
-            # 一旦目標高さを与えて要求サイズの圧力を弱める
-            try:
-                right_pw.paneconfigure(lineup_lf, height=h1)
-                right_pw.paneconfigure(bf,        height=h2)
-                right_pw.paneconfigure(sf_outer,  height=max(h - h1 - h2, 0))
-            except Exception:
-                pass
-
-            # 累積比率でサッシュを置く（tk.PanedWindow）
-            try:
-                right_pw.sash_place(0, 0, h1)          # lineup と band の境（30%）
-                right_pw.sash_place(1, 0, h1 + h2)     # band と setlist の境（60%）
-            except Exception:
-                # もし ttk だった場合（通常は不要）
-                try:
-                    right_pw.sashpos(0, h1)
-                    right_pw.sashpos(1, h1 + h2)
-                except Exception:
-                    pass
-
-        # self.after_idle(_init_right_panes)
-        # →→→ 追記ここまで
-
-
-
-        # ヘッダーは sf_outer 内で従来通り pack
+        # ヘッダー行（タイトル＋ボタン）
         header = ttk.Frame(sf_outer)
         header.pack(fill=tk.X)
-        ttk.Label(header, text="セトリ編集（seqは常に1..N）", font=("", 10)).pack(side=tk.LEFT)
-        ttk.Button(header, text="出演者を一括適用", command=self.apply_lineup_to_setlist).pack(side=tk.RIGHT)
 
-        self.after_idle(_init_right_panes)
+        ttk.Label(header, text="セトリ編集（seqは常に1..N）",
+                font=("", 10)).pack(side=tk.LEFT)
 
+        ttk.Button(
+            header,
+            text="出演者を一括適用",
+            command=self.apply_lineup_to_setlist
+        ).pack(side=tk.RIGHT)
+
+        # 中身のフレーム（元のsfの代わり）
         sf = ttk.Frame(sf_outer)
         sf.pack(fill=tk.BOTH, expand=True)
 
+
+
+
+
+        # 1) Treeview 作成（器を作る）
         self.setlist_tv = ttk.Treeview(
             sf, columns=("seq","title","section","version"),
             show="headings", height=3
@@ -890,45 +756,6 @@ class App(ttk.Frame):
         # ステータス
         self.status = tk.StringVar(value="Ready")
         ttk.Label(self, textvariable=self.status, foreground="#666").pack(anchor="w", padx=10, pady=(0,8))
-
-
-        # # --- 右ペイン内のサッシュ位置を「最初だけ」初期化 -------------
-        # # 直前に right_pw.add(...) で 3 つの pane を追加済みであること
-        # # lineup 用、band 用、setlist 用の 3 つが right_pw に入っている前提
-
-        # def _init_right_panes():
-        #     # 幾度か待って「実サイズ」を掴んでから調整する
-        #     right_pw.update_idletasks()
-        #     h = right_pw.winfo_height()
-        #     if h <= 0:
-        #         self.after(50, _init_right_panes)
-        #         return
-
-        #     # --------- A) tk.PanedWindow を使っている場合はこちら ---------
-        #     try:
-        #         right_pw.sash_place(0, 0, int(h * 0.30))  # 30%
-        #         right_pw.sash_place(1, 0, int(h * 0.60))  # 60%（= 0.30 + 0.30）
-        #         # デバッグ出力：実際のサッシュ座標（px）を出す
-        #         c0 = right_pw.sash_coord(0)  # (x, y)
-        #         c1 = right_pw.sash_coord(1)
-        #         print(f"[DEBUG] h={h} sash0={c0} sash1={c1}")
-        #     except Exception as e:
-        #         print("[DEBUG] tk.PanedWindow ではない/失敗:", e)
-
-        #     # # --------- B) ttk.Panedwindow を使っている場合はこちら ---------
-        #     # try:
-        #     #     right_pw.sashpos(0, int(h * 0.30))  # 30%
-        #     #     right_pw.sashpos(1, int(h * 0.60))  # 60%
-        #     #     # デバッグ出力：実際のサッシュ位置（px）を出す
-        #     #     p0 = right_pw.sashpos(0)
-        #     #     p1 = right_pw.sashpos(1)
-        #     #     print(f"[DEBUG] h={h} sashpos0={p0} sashpos1={p1}")
-        #     # except Exception as e:
-        #     #     print("[DEBUG] ttk.Panedwindow ではない/失敗:", e)
-
-        # # 起動後「一度だけ」呼ぶ（何かに上書きされないため）
-        # self.after_idle(_init_right_panes)
-        # # -----------------------------------------------------------
 
 
     def get_current_lineup(self):
