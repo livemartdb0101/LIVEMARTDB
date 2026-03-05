@@ -122,9 +122,15 @@ async function loadAll(){
   }
 
   // song_id ごとの総演奏回数 & ユニークイベント数（Numberに統一）
+  const NG = new Set(['mc','se','video']);
+  
   songPlayCount = new Map();
   const tmpMap = new Map(); // sid -> Set(eid)
   for(const row of setlist){
+
+    const sec = String(row.section||'').trim().toLowerCase();
+    if (NG.has(sec)) continue;
+
     const sid=Number(row.song_id), eid=Number(row.event_id);
     songPlayCount.set(sid,(songPlayCount.get(sid)||0)+1);
     if(!tmpMap.has(sid)) tmpMap.set(sid,new Set());

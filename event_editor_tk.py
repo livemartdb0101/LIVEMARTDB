@@ -15,6 +15,7 @@ try:
 except Exception:
     HAVE_PIL = False
 
+from jpg2webp import convert_all_or_abort
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH  = os.path.join(BASE_DIR, "eventdata.db")
@@ -554,6 +555,7 @@ class App(ttk.Frame):
         ttk.Button(btn_fr, text="保存（新規/更新）", command=self.save_event).pack(side=tk.LEFT)
         ttk.Button(btn_fr, text="セトリをリロード", command=self.load_setlist).pack(side=tk.LEFT, padx=6)
         ttk.Button(btn_fr, text="Web参照", command=open_web_preview).pack(side=tk.RIGHT, padx=4)
+        ttk.Button(btn_fr, text="jpg2webp", command=self.on_click_convert_jpg_to_webp).pack(side=tk.RIGHT, padx=6)
         ttk.Button(btn_fr, text="Publish JSON", command=self.publish_json).pack(side=tk.RIGHT)
 
         # 下：イベント一覧
@@ -1636,6 +1638,14 @@ class App(ttk.Frame):
                 messagebox.showerror("Publish", f"失敗しました。\n{proc.stderr}")
         except Exception as e:
             messagebox.showerror("Publish", str(e))
+
+
+    def on_click_convert_jpg_to_webp(self):
+        try:
+            total, converted = convert_all_or_abort()  # site/image 配下を処理
+            messagebox.showinfo("JPG→WEBP 変換", f"対象: {total} 件 / 変換成功: {converted} 件\n（*.jpg は削除済み）")
+        except Exception as e:
+            messagebox.showerror("JPG→WEBP 変換 - 中止", str(e))
 
 
     def open_seq_editor(self, seq: int):
