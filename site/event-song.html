@@ -165,11 +165,27 @@
       const songDetail   = await fetch(`data/song/${encodeURIComponent(song)}.json`).then(r => r.json());
       const otherEvents  = (songDetail.events || []).filter(e => e.event_id != Number(event));
 
+      // Lineup 順に performer を揃えるための準備
+      const lineupIndex = new Map(
+        (ev.lineup || []).map((m, idx) => [String(m.person_id), idx])
+      );
+
+      // s.performer を lineup 順に並べ替える
+      const performers = [...(s.performer || [])].sort((a, b) => {
+        const la = lineupIndex.get(String(a.person_id));
+        const lb = lineupIndex.get(String(b.person_id));
+
+        if (la != null && lb != null) return la - lb; // 両方 lineup にいる
+        if (la != null) return -1;                    // a だけ lineup にいる
+        if (lb != null) return 1;                     // b だけ lineup にいる
+        return 0;                                     // どちらもいない
+      });
+
       // performer（Lineup と同じ2列テーブルで整形）
       let perf = "";
       if (s.performer && s.performer.length) {
         perf += `<table class="lineup-table">`;
-        s.performer.forEach(p => {
+        performers.forEach(p => {
           const role = p.position ? `${p.role}（${p.position}）` : p.role;
           perf += `
             <tr>

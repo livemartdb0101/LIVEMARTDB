@@ -63,30 +63,125 @@ function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function highlight(text, regex){ if(!text) return ''; const safe=escapeHtml(text); return regex? safe.replace(regex,m=>`<mark>${m}</mark>`): safe; }
 
-/* ====== クエリ解析（AND/OR + フレーズ） ====== */
+/* ====== クエリ解析（Google風 AND/OR/NOT + フレーズ）====== */
 function parseQuery(q){
-  const raw=(q||'').trim(); if(!raw) return {mode:'AND',tokens:[]};
-  const phraseRegex=/"([^"]+)"/g; const phrases=[]; let m;
-  while((m=phraseRegex.exec(raw))!==null) phrases.push(m[1]);
-  const tmp=raw.replace(/"[^"]+"/g,' ');
-  const hasExplicitOr = /\bor\b/i.test(tmp) || tmp.includes('|') || /^or:\s*/i.test(raw);
-  let normalized = raw.replace(/^or:\s*/i,'').replace(/\|/g,' ').replace(/\bor\b/ig,' ').replace(/"[^"]+"/g,' ');
-  const words = normalized.split(/\s+/).filter(Boolean);
-  const MIN_LEN = 2; // 英数字は2文字以上（誤爆抑制）
-  const tokens=[...phrases,...words].filter(tok=>{
-    const t=tok.trim(); if(!t) return false;
-    if(/^[A-Za-z0-9]+$/.test(t)) return t.length>=MIN_LEN;
-    return t.length>=1;
-  });
-  return {mode: hasExplicitOr?'OR':'AND', tokens};
+  const raw = (q || '').trim();
+  if (!raw) return { mode: 'AND', tokens: [] };
+
+  const norm = s => (s.normalize ? s.normalize('NFKC') : s).toLowerCase();
+
+  // 1) -"フレーズ" を先に抜き出す（NOTフレーズ）
+  const notPhraseRegex = /-\s*"([^"]+)"/g;
+  const negatives = [];
+  let m;
+  while ((m = notPhraseRegex.exec(raw)) !== null) {
+    const p = m[1].trim();
+    if (p) negatives.push('-' + norm(p));
+  }
+  const afterNotPhrase = raw.replace(notPhraseRegex, ' ');
+
+  // 2) 正のフレーズ
+  const phraseRegex = /"([^"]+)"/g;
+  const positives = [];
+  while ((m = phraseRegex.exec(afterNotPhrase)) !== null) {
+    const p = m[1].trim();
+    if (p) positives.push(norm(p));
+  }
+  const removedPhrases = afterNotPhrase.replace(phraseRegex, ' ');
+
+  // 3) 残りから単語・OR・NOT を抽出
+  const parts = removedPhrases.split(/\s+/).filter(Boolean);
+  const words = [];
+  let hasOR = false;
+
+  for (const w0 of parts) {
+    const w = norm(w0);
+    if (!w) continue;
+    if (w === 'or' || w === '|') { hasOR = true; continue; }
+    if (w.startsWith('-') && w.length > 1) {
+      negatives.push(w);                // そのまま（-xxx）
+    } else {
+      words.push(w);                    // 正の単語
+    }
+  }
+
+  // 4) 出力（旧IF互換）：mode は AND/OR、tokens は正と負（負は先頭に-）
+  const mode = hasOR ? 'OR' : 'AND';
+  const tokens = [...positives, ...words, ...negatives];
+
+  return { mode, tokens };
 }
-function buildMatcher(tokens,mode){
-  if(!tokens.length) return ()=>false;
-  const lowers=tokens.map(t=>t.toLowerCase());
-  return mode==='OR'
-    ? (text)=>{ if(!text) return false; const t=String(text).toLowerCase(); return lowers.some(tok=>t.includes(tok)); }
-    : (text)=>{ if(!text) return false; const t=String(text).toLowerCase(); return lowers.every(tok=>t.includes(tok)); };
+/* ====== マッチャ（旧IF：buildMatcher(tokens, mode)）====== */
+function buildMatcher(tokens, mode){
+  const norm = s => (s && s.normalize ? s.normalize('NFKC') : (s || '')).toLowerCase();
+  const pos = [], neg = [];
+  for (const t of (tokens || [])) {
+    if (typeof t !== 'string') continue;
+    if (t.startsWith('-') && t.length > 1) neg.push(t.slice(1));
+    else if (t) pos.push(t);
+  }
+  const isOR = String(mode || 'AND').toUpperCase() === 'OR';
+
+  return function match(text){
+    const hay = norm(String(text || ''));
+
+    // NOT：含んだら不一致
+    for (const n of neg) {
+      if (n && hay.includes(n)) return false;
+    }
+    // POS：AND or OR
+    if (pos.length) {
+      if (isOR) {
+        // 1つでも含めばOK
+        let any = false;
+        for (const p of pos) { if (p && hay.includes(p)) { any = true; break; } }
+        if (!any) return false;
+      } else {
+        // 全部含む
+        for (const p of pos) { if (p && !hay.includes(p)) return false; }
+      }
+    }
+    return true;
+  };
 }
+
+
+// （既存）buildMatcher の直後あたりでOK
+
+// --- AND の “カテゴリ横断成立” 判定に使う小道具 ---
+function splitTokens(tokens){
+  const pos=[], neg=[];
+  for (const t of (tokens||[])) {
+    if (typeof t !== 'string') continue;
+    if (t.startsWith('-') && t.length>1) neg.push(t.slice(1));
+    else if (t) pos.push(t);
+  }
+  return {pos, neg};
+}
+
+function collectCoverage(texts, posTokens){
+  const seen=new Set();
+  for (const txt of (texts||[])) {
+    const s = (txt && txt.normalize ? txt.normalize('NFKC') : (txt||'')).toLowerCase();
+    for (const p of posTokens) if (p && s.includes(p)) seen.add(p);
+    if (seen.size === posTokens.length) break;
+  }
+  return seen;
+}
+
+function coversAllPosAcrossCollections(collectionTextsArr, posTokens){
+  if (!posTokens.length) return true; // 空クエリは成立扱い
+  const need = new Set(posTokens);
+  for (const texts of collectionTextsArr) {
+    const got = collectCoverage(texts, posTokens);
+    for (const t of got) need.delete(t);
+    if (need.size===0) return true;
+  }
+  return need.size===0;
+}
+
+
+
 function makeQueryRegex(q){
   const {tokens}=parseQuery(q); if(!tokens.length) return null;
   const parts=tokens.map(escapeRegExp).sort((a,b)=>b.length-a.length);
@@ -143,15 +238,15 @@ dataReady = loadAll();
 /* ====== コマンド・レジストリ（ここに1行追加するだけで拡張できる） ====== */
 const COMMANDS = {
   events: {
-    label: 'イベント一覧',
+    label: 'イベント一覧（降順）',
     handler: ({events}) => ({ events: [...events].sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))) })
   },
-  songs: {
-    label: '曲一覧',
-    handler: ({songs}) => ({ songs: [...songs].sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),'ja')) })
-  },
+  // songs: {
+  //   label: '曲一覧',
+  //   handler: ({songs}) => ({ songs: [...songs].sort((a,b)=>String(a.title||'').localeCompare(String(b.title||''),'ja')) })
+  // },
   member: {
-    label: 'メンバー一覧',
+    label: '現役メンバー一覧',
     handler: ({ people }) => ({
       people: [...people]
         .filter(p => String(p.left_on || '').trim() == '')
@@ -164,10 +259,10 @@ const COMMANDS = {
     label: '会場一覧',
     handler: ({venues}) => ({ venues: [...venues].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ja')) })
   },
-  acts: {
-    label: '出演者一覧',
-    handler: ({acts}) => ({ acts: [...acts].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ja')) })
-  },
+  // acts: {
+  //   label: '出演者一覧',
+  //   handler: ({acts}) => ({ acts: [...acts].sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'ja')) })
+  // },
 
   // ワンマン（acts=1 のイベントのみ）
   oneman: {
@@ -274,24 +369,57 @@ function searchAll(q){
   const lowerQ = (q||'').toLowerCase();
   const hasBand = /\bband\b/.test(lowerQ);
   const hasIdol = /\bidol\b/.test(lowerQ);
-  const match = buildMatcher(tokens, mode);
+
+  // band/idol はテキストトークンから外して、“扱い”を分離する
+  const filteredTokens = tokens.filter(t => !/^(-)?\s*(band|idol)$/.test(String(t).toLowerCase()));
+
+  // ③ 追加：グローバルAND（カテゴリ横断成立）チェック
+  const { pos /*, neg*/ } = splitTokens(filteredTokens);
+
+  if (String(mode).toUpperCase()==='AND') {
+    const collectionTextsArr = [
+      (events||[]).map(ev=>eventText(ev)),
+      (songs ||[]).map(s =>songText(s)),
+      (people||[]).map(p =>personText(p)),
+      (venues||[]).map(v =>venueText(v)),
+      (acts  ||[]).map(a =>actText(a)),
+    ];
+    const ok = coversAllPosAcrossCollections(collectionTextsArr, pos);
+    if (!ok) return out; // どのカテゴリの合算でも満たせないなら全空
+  }
+
+  // // ④ 追加：各カテゴリの絞り込みは “OR + NOT”
+  // ④：各カテゴリはクエリのモードに従う（AND のときは AND で絞る）
+  const isAND = String(mode).toUpperCase()==='AND';
+  const matchCat = buildMatcher(filteredTokens, isAND ? 'AND' : 'OR');
+
 
   out.events = events.filter(ev=>{
-    if(match(eventText(ev))) return true;
-    if(hasBand && (ev.form||'').toUpperCase()==='BAND') return true;
-    if(hasIdol && (ev.form||'').toUpperCase()==='IDOL') return true;
-    return false;
+    const form = String(ev.form||'').toUpperCase();
+    if (isAND) {
+      // AND：form が指定されていれば必須条件に（広がらない）
+      if (hasBand && form!=='BAND') return false;
+      if (hasIdol && form!=='IDOL') return false;
+      return matchCat(eventText(ev)); // 他の語は AND で満たす
+    } else {
+      // OR：テキスト一致 もしくは form 一致でも可（広げる）
+      if (matchCat(eventText(ev))) return true;
+      if (hasBand && form==='BAND') return true;
+      if (hasIdol && form==='IDOL') return true;
+      return false;
+    }
+
   }).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
 
-  out.songs  = songs.filter(s=>match(songText(s)));
-  out.people = people.filter(p=>match(personText(p)));
-  out.venues = venues.filter(v=>match(venueText(v)));
-  out.acts   = acts.filter(a=>match(actText(a)));
+  out.songs  = songs.filter(s=>matchCat(songText(s)));
+  out.people = people.filter(p=>matchCat(personText(p)));
+  out.venues = venues.filter(v=>matchCat(venueText(v)));
+  out.acts   = acts.filter(a=>matchCat(actText(a)));
 
   const eraMap=new Map(), tourMap=new Map();
   events.forEach(ev=>{
-    if(ev.era && ev.era_id && match(ev.era))  eraMap.set(ev.era_id,{id:ev.era_id,name:ev.era});
-    if(ev.tour&& ev.tour_id&& match(ev.tour)) tourMap.set(ev.tour_id,{id:ev.tour_id,name:ev.tour});
+    if(ev.era && ev.era_id && matchCat(ev.era))  eraMap.set(ev.era_id,{id:ev.era_id,name:ev.era});
+    if(ev.tour&& ev.tour_id&& matchCat(ev.tour)) tourMap.set(ev.tour_id,{id:ev.tour_id,name:ev.tour});
   });
   out.eras = [...eraMap.values()];
   out.tours= [...tourMap.values()];

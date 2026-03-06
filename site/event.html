@@ -157,6 +157,52 @@
     }
 
     async function main() {
+
+
+
+      // 一度だけ読み込む簡易キャッシュ
+      let __eventsListCache = null;
+
+      /**
+       * 前後イベントIDを返す（date DESC＝新→古）
+       * @param {number|string} currentId  現在のイベントID
+       * @param {string} [src='data/events.json']  イベント一覧のURL
+       * @returns {Promise<{prevId:number|null, nextId:number|null}>}
+       */
+      async function getPrevNextEventIds(currentId, src = 'data/events.json') {
+        // 一覧をキャッシュ
+        if (!__eventsListCache) {
+          const raw = await fetch(src).then(r => r.json());
+          __eventsListCache = Array.isArray(raw) ? raw : [];
+        }
+
+        // 必要最小フィールドに正規化して降順ソート（新→古）
+        const list = __eventsListCache
+          .map(x => ({
+            id: Number(x.id),
+            date: String(x.date || ''),
+          }))
+          .filter(x => Number.isFinite(x.id) && x.date);
+
+        // 形式が YYYY-MM-DD 前提なら localeCompare でOK
+        list.sort((a, b) => {
+          const d = b.date.localeCompare(a.date);   // 新しいほど小さくなる（=先頭）
+          return d !== 0 ? d : b.id - a.id;         // 同日ならID大きい方を新しい側に
+        });
+
+        const idx = list.findIndex(ev => String(ev.id) === String(currentId));
+        if (idx === -1) return { prevId: null, nextId: null };
+
+        // 降順： [idx+1] が一つ古い（PREV）、[idx-1] が一つ新しい（NEXT）
+        const prevId = list[idx + 1]?.id ?? null;  // 古い方
+        const nextId = list[idx - 1]?.id ?? null;  // 新しい方
+        return { prevId, nextId };
+      }
+
+
+
+
+
       const id = getId();
       if (!id) return;
 
@@ -185,12 +231,13 @@
       // フライヤー画像
       const flyerPath = `image/event_${ev.id}.webp`;
       html += `
-        <p>
+        <p class="flyer-slot">
           <img class="zoomable" src="${flyerPath}" alt="Event Flyer"
                style="max-width: 400px; border: 1px solid #ccc;"
                onerror="this.style.display='none'">
         </p>
       `;
+
 
       // 対バン
       if (ev.acts && ev.acts.length) {
@@ -252,6 +299,33 @@
       }
 
       div.innerHTML = html;
+
+
+
+      // ▼ PREV / NEXT をフライヤー直下に挿入
+      try {
+        const { prevId, nextId } = await getPrevNextEventIds(ev.id, 'data/events.json');
+        const nav = `
+          <nav class="pn-nav" style="
+            display:flex;justify-content:space-between;align-items:center;
+            gap:12px;margin:12px 0 8px;font-size:1.05em;">
+            ${
+              prevId
+                ? `<a href="event.html?id=${prevId}">&laquo; PREV</a>`
+                : `<span style="opacity:.4;">&laquo; PREV</span>`
+            }
+            ${
+              nextId
+                ? `<a href="event.html?id=${nextId}">NEXT &raquo;</a>`
+                : `<span style="opacity:.4;">NEXT &raquo;</span>`
+            }
+          </nav>
+        `;
+        const flyerP = div.querySelector('p.flyer-slot');
+        if (flyerP) flyerP.insertAdjacentHTML('afterend', nav);
+      } catch (e) {
+        console.warn('prev/next nav skipped:', e);
+      }
 
 
       // ▼ イベント全体ギャラリー（event_song_<id>_*_*.webp を舐める）

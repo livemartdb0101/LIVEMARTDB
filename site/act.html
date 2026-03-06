@@ -162,11 +162,17 @@
       if (act.events && act.events.length) {
         html += `<h3>出演イベント一覧</h3>`;
         html += `<table>
-          <tr><th>日付</th><th>イベント</th><th>形態</th></tr>`;
+          <tr>
+            <th>日付</th>
+            <th>イベント</th>
+            <th>会場</th>
+            <th>形態</th>
+          </tr>`;
         act.events.forEach(ev => {
           html += `<tr>
             <td>${escapeHtml(ev.date)}</td>
-            <td><a href="event.html?id=${ev.event_id}">${escapeHtml(ev.title)}</a></td>
+            <td><a href="event.html?id=${ev.event_id}">${escapeHtml(ev.title || '')}</a></td>
+            <td><a href="venue.html?id=${ev.venue_id}">${escapeHtml(ev.venue || '')}</a></td>
             <td>${escapeHtml(ev.form || '')}</td>
           </tr>`;
         });
