@@ -342,16 +342,23 @@ def qone(sql, args=()):
 #         cur.execute(sql, args)
 #         con.commit()
 
-def exec1(sql, args=()):
-    with sqlite3.connect(DB_PATH) as con:
-        cur = con.execute(sql, args)
-        con.commit()
+# def exec1(sql, args=()):
+#     with sqlite3.connect(DB_PATH) as con:
+#         cur = con.execute(sql, args)
+#         con.commit()
 
-        # if sql.strip().upper().startswith(("UPDATE", "DELETE")):
+#         # if sql.strip().upper().startswith(("UPDATE", "DELETE")):
+#         if sql.strip().upper().startswith("UPDATE"):
+#             if cur.rowcount == 0:
+#                 raise RuntimeError(f"更新失敗検知: {sql}")
+
+def exec1(sql, args=()):
+    with db_conn() as con:
+        cur = con.execute(sql, args)
+
         if sql.strip().upper().startswith("UPDATE"):
             if cur.rowcount == 0:
                 raise RuntimeError(f"更新失敗検知: {sql}")
-
 
 def resequence(event_id: int):
     rows = qall("SELECT seq FROM setlist WHERE event_id=? ORDER BY seq", (event_id,))
@@ -477,17 +484,8 @@ class App(ttk.Frame):
         self._build_ui()
         self.refresh_events()
 
-    # def _build_ui(self):
-    #     # 上段：左右にイベント一覧 / イベント編集
-    #     top = ttk.Panedwindow(self, orient=tk.HORIZONTAL)
-    #     top.pack(fill=tk.BOTH, expand=True, padx=8, pady=3)
 
-    #     # 左：イベント一覧
-    #     left = ttk.Frame(top)
-    #     top.add(left)
-    #     # 右：イベント編集
-    #     right = ttk.Frame(top)
-    #     top.add(right)
+
 
     def _build_ui(self):
         # 上段：左右にイベント一覧 / イベント編集
@@ -573,8 +571,20 @@ class App(ttk.Frame):
         # ttk.Button(search_fr, text="Web参照", width=12, command=open_web_preview).pack(side=tk.RIGHT, padx=4)
         # ttk.Button(search_fr, text="Publish JSON", width=14, command=self.publish_json).pack(side=tk.RIGHT)
 
-        self.events_tv = ttk.Treeview(lf, columns=("id","date","title","venue","form"), show="headings", height=12)
-        self.events_tv.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0,10))
+        # self.events_tv = ttk.Treeview(lf, columns=("id","date","title","venue","form"), show="headings", height=12)
+        # self.events_tv.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0,10))
+
+        tv_frame = ttk.Frame(lf)
+        tv_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=(0,10))
+
+        self.events_tv = ttk.Treeview(tv_frame, columns=("id","date","title","venue","form"), show="headings", height=12)
+        self.events_tv.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        scroll = ttk.Scrollbar(tv_frame, orient="vertical", command=self.events_tv.yview)
+        scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.events_tv.configure(yscrollcommand=scroll.set)
+
         self.events_tv.heading("id",  text="id")
         self.events_tv.heading("date",  text="日付")
         self.events_tv.heading("title", text="タイトル")
@@ -586,10 +596,6 @@ class App(ttk.Frame):
         self.events_tv.column("venue", width=100, anchor="w")
         self.events_tv.column("form", width=30, anchor="w")
         self.events_tv.bind("<<TreeviewSelect>>", self.on_event_select)
-
-
-
-
 
 
 
@@ -611,17 +617,7 @@ class App(ttk.Frame):
         right_pw.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
 
 
-        # # --- 出演者（lineup）
-        # lf = ttk.LabelFrame(right, text="出演者（イベント全体：lineup）")
-        # lf.pack(fill=tk.BOTH, expand=False, padx=4, pady=2)
 
-        # # 一覧
-        # self.lineup_tv = ttk.Treeview(
-        #     lf,
-        #     columns=("name","role"),   # ★ pos/guest を削除
-        #     show="headings",
-        #     height=3
-        # )
 
         # --- 出演者（lineup）  ※親を right → right_pw に変更し、pack をやめる
 
@@ -629,30 +625,38 @@ class App(ttk.Frame):
         lineup_lf = ttk.LabelFrame(right_pw, text="出演者（イベント全体：lineup）")
         right_pw.add(lineup_lf, minsize=120)
 
-        # （lineup 内部は親を lineup_lf に）
+
+        # ---- lineup list ----
+        tv_frame = ttk.Frame(lineup_lf)
+        tv_frame.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
+
         self.lineup_tv = ttk.Treeview(
-            lineup_lf,
+            tv_frame,
             columns=("name","role"),
             show="headings",
             height=3
         )
 
-        self.lineup_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
+        self.lineup_tv.heading("name", text="メンバー")
+        self.lineup_tv.heading("role", text="役割")
 
-        # for c, t, w in [
-        #     ("name","名前",80),
-        #     ("role","役割",220),
-        # ]:
-        #     self.lineup_tv.heading(c, text=t)
-        #     self.lineup_tv.column(c, width=w, anchor="w")
-        
-        # self.lineup_tv.bind("<<TreeviewSelect>>", self.on_lineup_select)
+        self.lineup_tv.column("name", width=80)
+        self.lineup_tv.column("role", width=120)
+
+        self.lineup_tv.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        scroll = ttk.Scrollbar(tv_frame, orient="vertical", command=self.lineup_tv.yview)
+        scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.lineup_tv.configure(yscrollcommand=scroll.set)
+
 
         # 追加フォーム
         # ln_fr = ttk.Frame(lf); ln_fr.pack(fill=tk.X, padx=6, pady=2)
         ln_fr = ttk.Frame(lineup_lf); ln_fr.pack(fill=tk.X, padx=6, pady=2)
         ttk.Label(ln_fr, text="メンバー:").grid(row=0, column=0, sticky="e")
         self.ln_mem_cb = ttk.Combobox(ln_fr, values=self.people_names, width=20)
+        self.ln_mem_cb.bind("<<ComboboxSelected>>", self._auto_role_from_member)
         self.ln_mem_cb.grid(row=0, column=1, sticky="w", padx=4)
 
         ttk.Label(ln_fr, text="役割:").grid(row=0, column=2, sticky="e")
@@ -671,49 +675,61 @@ class App(ttk.Frame):
         ttk.Button(btn_ln, text="▲上へ", command=lambda: self.move_lineup("up")).pack(side=tk.LEFT, padx=(12,0))
         ttk.Button(btn_ln, text="▼下へ", command=lambda: self.move_lineup("down")).pack(side=tk.LEFT, padx=6)
 
-#        ttk.Button(btn_ln, text="現役メンバー追加", command=self.add_active_to_lineup)\
-#        .pack(side=tk.LEFT, padx=12)
 
 
-        # # --- 対バン（bandsevent） ---
-        # bf = ttk.LabelFrame(right, text="対バン（bandsevent）")
-        # bf.pack(fill=tk.BOTH, expand=False, padx=4, pady=2)
+        # --- 対バン（bandsevent） ※親を right → right_pw に変更し、pack をやめる
 
-        # # 一覧
+        # # --- band パネル（★ここで変数名 bf を維持★）
+        # bf = ttk.LabelFrame(right_pw, text="対バン（bandsevent）")
+        # right_pw.add(bf, minsize=120)
+
+        # # （band の中身は親を bf に）
         # self.band_tv = ttk.Treeview(
         #     bf,
         #     columns=("seq","act_name"),
         #     show="headings",
         #     height=3
         # )
+
+
         # self.band_tv.heading("seq", text="#")
         # self.band_tv.heading("act_name", text="バンド名")
         # self.band_tv.column("seq", width=10, anchor="w")
         # self.band_tv.column("act_name", width=260, anchor="w")
         # self.band_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
 
-        # --- 対バン（bandsevent） ※親を right → right_pw に変更し、pack をやめる
+        # band_fr = ttk.Frame(bf)            # ← NameError を解消（親は bf）
+        # band_fr.pack(fill=tk.X, padx=6, pady=2)
 
         # --- band パネル（★ここで変数名 bf を維持★）
         bf = ttk.LabelFrame(right_pw, text="対バン（bandsevent）")
         right_pw.add(bf, minsize=120)
 
         # （band の中身は親を bf に）
+
+        tv_frame = ttk.Frame(bf)
+        tv_frame.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
+
         self.band_tv = ttk.Treeview(
-            bf,
+            tv_frame,
             columns=("seq","act_name"),
             show="headings",
             height=3
         )
 
-
         self.band_tv.heading("seq", text="#")
         self.band_tv.heading("act_name", text="バンド名")
         self.band_tv.column("seq", width=10, anchor="w")
         self.band_tv.column("act_name", width=260, anchor="w")
-        self.band_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
 
-        band_fr = ttk.Frame(bf)            # ← NameError を解消（親は bf）
+        self.band_tv.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        scroll = ttk.Scrollbar(tv_frame, orient="vertical", command=self.band_tv.yview)
+        scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.band_tv.configure(yscrollcommand=scroll.set)
+
+        band_fr = ttk.Frame(bf)
         band_fr.pack(fill=tk.X, padx=6, pady=2)
 
 
@@ -735,32 +751,6 @@ class App(ttk.Frame):
         ttk.Button(btn_bf, text="▲上へ", command=lambda: self.move_band("up")).pack(side=tk.LEFT, padx=(12,0))
         ttk.Button(btn_bf, text="▼下へ", command=lambda: self.move_band("down")).pack(side=tk.LEFT, padx=6)
 
-
-        # sf_outer = ttk.Frame(right)
-        # sf_outer.pack(fill=tk.BOTH, expand=True, padx=4, pady=2)
-
-        # # ヘッダー行（タイトル＋ボタン）
-        # header = ttk.Frame(sf_outer)
-        # header.pack(fill=tk.X)
-
-        # ttk.Label(header, text="セトリ編集（seqは常に1..N）",
-        #         font=("", 10)).pack(side=tk.LEFT)
-
-        # ttk.Button(
-        #     header,
-        #     text="出演者を一括適用",
-        #     command=self.apply_lineup_to_setlist
-        # ).pack(side=tk.RIGHT)
-
-        # # 中身のフレーム（元のsfの代わり）
-        # sf = ttk.Frame(sf_outer)
-        # sf.pack(fill=tk.BOTH, expand=True)
-
-        # # 1) Treeview 作成（器を作る）
-        # self.setlist_tv = ttk.Treeview(
-        #     sf, columns=("seq","title","section","version"),
-        #     show="headings", height=3
-        # )
 
 
         # --- セトリ（setlist）ブロック：sf_outer をパネル化
@@ -832,27 +822,62 @@ class App(ttk.Frame):
         sf = ttk.Frame(sf_outer)
         sf.pack(fill=tk.BOTH, expand=True)
 
+        # self.setlist_tv = ttk.Treeview(
+        #     sf, columns=("seq","title","section","version"),
+        #     show="headings", height=3
+        # )
+
+        # # 2) 見た目の設定（★反映されていた「下の方」の数値を採用★）
+        # columns_info = [
+        #     ("seq", "#", 60),
+        #     ("title", "曲名", 280),
+        #     ("section", "セクション", 120),
+        #     ("version", "バージョン", 160)
+        # ]
+        # for col, text, w in columns_info:
+        #     self.setlist_tv.heading(col, text=text)
+        #     self.setlist_tv.column(col, width=w, anchor="w")
+
+        # # 3) 画面への配置と動作の設定
+        # self.setlist_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=2)
+        # self.setlist_tv.bind("<<TreeviewSelect>>", self.on_setlist_select)
+        # self.setlist_tv.bind("<Double-1>", self.on_setlist_dblclick)
+
+
+        # --- setlist list ----
+        tv_frame = ttk.Frame(sf)
+        tv_frame.pack(fill=tk.BOTH, expand=True, padx=6, pady=(6,0))
+
         self.setlist_tv = ttk.Treeview(
-            sf, columns=("seq","title","section","version"),
-            show="headings", height=3
+            tv_frame,
+            columns=("seq","title","section","version"),
+            show="headings",
+            height=3
         )
 
-        # 2) 見た目の設定（★反映されていた「下の方」の数値を採用★）
         columns_info = [
-            ("seq", "#", 60),
-            ("title", "曲名", 280),
-            ("section", "セクション", 120),
-            ("version", "バージョン", 160)
+            ("seq", "#", 10),
+            ("title", "曲名", 120),
+            ("section", "セクション", 30),
+            ("version", "バージョン", 40)
         ]
+
         for col, text, w in columns_info:
             self.setlist_tv.heading(col, text=text)
             self.setlist_tv.column(col, width=w, anchor="w")
+            
+        # self.setlist_tv.heading("seq", text="#")
+        # self.setlist_tv.heading("song", text="曲名")
 
-        # 3) 画面への配置と動作の設定
-        self.setlist_tv.pack(fill=tk.BOTH, expand=True, padx=6, pady=2)
+        self.setlist_tv.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        scroll = ttk.Scrollbar(tv_frame, orient="vertical", command=self.setlist_tv.yview)
+        scroll.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.setlist_tv.configure(yscrollcommand=scroll.set)
+
         self.setlist_tv.bind("<<TreeviewSelect>>", self.on_setlist_select)
         self.setlist_tv.bind("<Double-1>", self.on_setlist_dblclick)
-
 
         # 追加・編集 UI
         add_fr = ttk.Frame(sf); add_fr.pack(fill=tk.X, padx=6, pady=(0,6))
@@ -893,44 +918,6 @@ class App(ttk.Frame):
         self.status = tk.StringVar(value="Ready")
         ttk.Label(self, textvariable=self.status, foreground="#666").pack(anchor="w", padx=10, pady=(0,8))
 
-
-        # # --- 右ペイン内のサッシュ位置を「最初だけ」初期化 -------------
-        # # 直前に right_pw.add(...) で 3 つの pane を追加済みであること
-        # # lineup 用、band 用、setlist 用の 3 つが right_pw に入っている前提
-
-        # def _init_right_panes():
-        #     # 幾度か待って「実サイズ」を掴んでから調整する
-        #     right_pw.update_idletasks()
-        #     h = right_pw.winfo_height()
-        #     if h <= 0:
-        #         self.after(50, _init_right_panes)
-        #         return
-
-        #     # --------- A) tk.PanedWindow を使っている場合はこちら ---------
-        #     try:
-        #         right_pw.sash_place(0, 0, int(h * 0.30))  # 30%
-        #         right_pw.sash_place(1, 0, int(h * 0.60))  # 60%（= 0.30 + 0.30）
-        #         # デバッグ出力：実際のサッシュ座標（px）を出す
-        #         c0 = right_pw.sash_coord(0)  # (x, y)
-        #         c1 = right_pw.sash_coord(1)
-        #         print(f"[DEBUG] h={h} sash0={c0} sash1={c1}")
-        #     except Exception as e:
-        #         print("[DEBUG] tk.PanedWindow ではない/失敗:", e)
-
-        #     # # --------- B) ttk.Panedwindow を使っている場合はこちら ---------
-        #     # try:
-        #     #     right_pw.sashpos(0, int(h * 0.30))  # 30%
-        #     #     right_pw.sashpos(1, int(h * 0.60))  # 60%
-        #     #     # デバッグ出力：実際のサッシュ位置（px）を出す
-        #     #     p0 = right_pw.sashpos(0)
-        #     #     p1 = right_pw.sashpos(1)
-        #     #     print(f"[DEBUG] h={h} sashpos0={p0} sashpos1={p1}")
-        #     # except Exception as e:
-        #     #     print("[DEBUG] ttk.Panedwindow ではない/失敗:", e)
-
-        # # 起動後「一度だけ」呼ぶ（何かに上書きされないため）
-        # self.after_idle(_init_right_panes)
-        # # -----------------------------------------------------------
 
 
     def get_current_lineup(self):
@@ -1169,6 +1156,9 @@ class App(ttk.Frame):
         self.setlist_tv.delete(*self.setlist_tv.get_children())
         self.status.set(f"削除しました: id={eid}")
 
+
+
+
     # ----- セトリ -----
     def load_setlist(self):
         self.setlist_tv.delete(*self.setlist_tv.get_children())
@@ -1181,7 +1171,6 @@ class App(ttk.Frame):
         for r in rows:
             self.setlist_tv.insert("", tk.END, iid=str(r["seq"]),
                                    values=(r["seq"], r["song_title"], r["section"] or "", r["version"] or ""))
-
 
 
     def on_setlist_select(self, event=None):
@@ -1446,7 +1435,7 @@ class App(ttk.Frame):
         if not sel:
             messagebox.showinfo("並べ替え", "行を選択してください")
             return
-        seq = int(sel[0])
+        seq = int(self.setlist_tv.item(sel[0])["values"][0])
         if direction == "up":
             other = qone("SELECT seq FROM setlist WHERE event_id=? AND seq<? ORDER BY seq DESC LIMIT 1",
                          (self.event_id, seq))
@@ -1603,16 +1592,41 @@ class App(ttk.Frame):
 
 
 
+    # def update_selected_row(self):
+    #     sel = self.setlist_tv.selection()
+    #     if not sel:
+    #         messagebox.showinfo("更新", "行を選択してください")
+    #         return
+    #     seq = int(self.setlist_tv.item(sel[0])["values"][0])
+    #     section = self.section_cb.get().strip() or None
+    #     version = self.version_var.get().strip() or None
+    #     exec1("UPDATE setlist SET section=?, version=? WHERE event_id=? AND seq=?",
+    #           (section, version, self.event_id, seq))
+    #     self.load_setlist()
+    #     self.setlist_tv.selection_set(str(seq))
+    #     self.setlist_tv.see(str(seq))
+    #     self.status.set("更新しました")
+
     def update_selected_row(self):
         sel = self.setlist_tv.selection()
         if not sel:
             messagebox.showinfo("更新", "行を選択してください")
             return
-        seq = int(sel[0])
+
+        seq = int(self.setlist_tv.item(sel[0])["values"][0])
+
+        title = self.song_cb.get()
+        song_id = self.song_title_to_id.get(title)
+
         section = self.section_cb.get().strip() or None
         version = self.version_var.get().strip() or None
-        exec1("UPDATE setlist SET section=?, version=? WHERE event_id=? AND seq=?",
-              (section, version, self.event_id, seq))
+
+        exec1("""
+        UPDATE setlist
+        SET song_id=?, section=?, version=?
+        WHERE event_id=? AND seq=?
+        """, (song_id, section, version, self.event_id, seq))
+
         self.load_setlist()
         self.setlist_tv.selection_set(str(seq))
         self.setlist_tv.see(str(seq))
@@ -1621,8 +1635,10 @@ class App(ttk.Frame):
     def on_setlist_dblclick(self, _evt):
         sel = self.setlist_tv.selection()
         if not sel: return
-        seq = int(sel[0])
+        seq = int(self.setlist_tv.item(sel[0])["values"][0])
         self.open_seq_editor(seq)
+
+
 
     # ----- Publish -----
     def publish_json(self):
@@ -2014,6 +2030,25 @@ class App(ttk.Frame):
             )
 
 
+    def _auto_role_from_member(self, event=None):
+        name = (self.ln_mem_cb.get() or "").strip()
+        mid = self.people_name_to_id.get(name)
+        if not mid:
+            return
+
+        row = qone("""
+            SELECT role
+            FROM lineup
+            WHERE member_id=?
+            GROUP BY role
+            ORDER BY COUNT(*) DESC
+            LIMIT 1
+        """, (mid,))
+
+        if row:
+            self.ln_role_cb.set(row["role"])
+
+
     def add_lineup(self):
         if not self.event_id:
             messagebox.showinfo("lineup", "先にイベントを保存してください"); return
@@ -2039,6 +2074,11 @@ class App(ttk.Frame):
         """, (self.event_id, mid, role, new_ord))
 
         self.load_lineup()
+        last = self.lineup_tv.get_children()[-1]
+        self.lineup_tv.selection_set(last)
+        self.lineup_tv.focus(last)
+        self.lineup_tv.see(last)
+
 
     def update_lineup(self):
         if not self.event_id:
@@ -2193,6 +2233,10 @@ class App(ttk.Frame):
             self.band_cb["values"] = vals
 
         self.load_band()
+        last = self.band_tv.get_children()[-1]
+        self.band_tv.selection_set(last)
+        self.band_tv.focus(last)
+        self.band_tv.see(last)
         self.status.set(f"対バン追加: {act_name}")
 
 
@@ -2251,7 +2295,7 @@ class App(ttk.Frame):
             messagebox.showinfo("並べ替え", "対バンを選択してください")
             return
 
-        seq = int(sel[0])  # 現在の行の seq（Treeview の item id = seq 前提）
+        seq = int(self.setlist_tv.item(sel[0])["values"][0])  # 現在の行の seq（Treeview の item id = seq 前提）
 
         # となりの seq を取得
         if direction == "up":
