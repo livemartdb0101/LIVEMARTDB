@@ -883,5 +883,40 @@
     "event_id": 26,
     "seq": 8,
     "song_id": 6
+  },
+  {
+    "event_id": 27,
+    "seq": 1,
+    "song_id": 6
+  },
+  {
+    "event_id": 27,
+    "seq": 2,
+    "song_id": 8
+  },
+  {
+    "event_id": 27,
+    "seq": 3,
+    "song_id": 3
+  },
+  {
+    "event_id": 27,
+    "seq": 4,
+    "song_id": 2
+  },
+  {
+    "event_id": 27,
+    "seq": 5,
+    "song_id": 9
+  },
+  {
+    "event_id": 27,
+    "seq": 6,
+    "song_id": 5
+  },
+  {
+    "event_id": 27,
+    "seq": 7,
+    "song_id": 1
   }
 ]

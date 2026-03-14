@@ -336,5 +336,18 @@
     "tour_id": null,
     "tour": "",
     "form": ""
+  },
+  {
+    "id": 27,
+    "date": "2026-03-14",
+    "title": "CrazyFest EXTRA-19",
+    "sub_title": "クレフェス10th SP",
+    "venue_id": 1,
+    "venue": "赤羽ReNY alpha",
+    "era_id": null,
+    "era": "",
+    "tour_id": null,
+    "tour": "",
+    "form": ""
   }
 ]

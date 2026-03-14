@@ -593,5 +593,30 @@
     "event_id": 26,
     "ord": 5,
     "member_id": 5
+  },
+  {
+    "event_id": 27,
+    "ord": 1,
+    "member_id": 1
+  },
+  {
+    "event_id": 27,
+    "ord": 2,
+    "member_id": 2
+  },
+  {
+    "event_id": 27,
+    "ord": 3,
+    "member_id": 3
+  },
+  {
+    "event_id": 27,
+    "ord": 4,
+    "member_id": 4
+  },
+  {
+    "event_id": 27,
+    "ord": 5,
+    "member_id": 7
   }
 ]

@@ -1,7 +1,17 @@
 {
   "id": 7,
   "name": "桐子",
-  "events": [],
+  "events": [
+    {
+      "event_id": 27,
+      "date": "2026-03-14",
+      "title": "CrazyFest EXTRA-19",
+      "venue": "赤羽ReNY alpha",
+      "venue_id": 1,
+      "form": null,
+      "role": "Drum"
+    }
+  ],
   "birthday": "",
   "joined_on": "",
   "left_on": "",

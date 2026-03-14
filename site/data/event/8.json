@@ -14,33 +14,33 @@
   "acts": [
     {
       "seq": 1,
-      "name": "FullMooN",
-      "act_id": 21
-    },
-    {
-      "seq": 2,
       "name": "Illumina from ArkRoyal",
       "act_id": 28
     },
     {
-      "seq": 3,
-      "name": "Empress",
-      "act_id": 22
-    },
-    {
-      "seq": 4,
-      "name": "囁揺的音楽集団 AsMR",
-      "act_id": 29
-    },
-    {
-      "seq": 5,
+      "seq": 2,
       "name": "Sirius",
       "act_id": 23
     },
     {
-      "seq": 6,
+      "seq": 3,
+      "name": "囁揺的音楽集団 AsMR",
+      "act_id": 29
+    },
+    {
+      "seq": 4,
+      "name": "Empress",
+      "act_id": 22
+    },
+    {
+      "seq": 5,
       "name": "QUEEN RABBIT",
       "act_id": 1
+    },
+    {
+      "seq": 6,
+      "name": "FullMooN",
+      "act_id": 21
     }
   ],
   "lineup": [

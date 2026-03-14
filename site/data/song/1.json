@@ -177,6 +177,17 @@
       "seq": 2,
       "section": null,
       "version": ""
+    },
+    {
+      "event_id": 27,
+      "date": "2026-03-14",
+      "title": "CrazyFest EXTRA-19",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
+      "form": "",
+      "seq": 7,
+      "section": null,
+      "version": ""
     }
   ]
 }

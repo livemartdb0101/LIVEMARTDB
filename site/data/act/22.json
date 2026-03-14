@@ -42,7 +42,7 @@
       "date": "2025-10-14",
       "title": "ZillionAutumnFESTIVAL2025",
       "form": "",
-      "seq": 3
+      "seq": 4
     },
     {
       "event_id": 11,
@@ -50,6 +50,13 @@
       "title": "CrazyFest EXTRA-18",
       "form": "",
       "seq": 4
+    },
+    {
+      "event_id": 27,
+      "date": "2026-03-14",
+      "title": "CrazyFest EXTRA-19",
+      "form": "",
+      "seq": 6
     }
   ]
 }
