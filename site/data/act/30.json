@@ -14,6 +14,8 @@
       "date": "2025-09-14",
       "title": "CrazyFest EXTRA-17",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 6
     },
     {
@@ -21,6 +23,8 @@
       "date": "2026-03-14",
       "title": "CrazyFest EXTRA-19",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 5
     }
   ]

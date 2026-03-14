@@ -14,6 +14,8 @@
       "date": "2024-03-19",
       "title": "QUEEN RABBT 始動",
       "form": "",
+      "venue_id": 14,
+      "venue": "初台DOORS",
       "seq": 6
     },
     {
@@ -21,6 +23,8 @@
       "date": "2024-05-30",
       "title": "黒聖女の狂宴",
       "form": "",
+      "venue_id": 14,
+      "venue": "初台DOORS",
       "seq": 4
     },
     {
@@ -28,6 +32,8 @@
       "date": "2024-10-10",
       "title": "渋谷女子会〜バンド天国",
       "form": "",
+      "venue_id": 14,
+      "venue": "初台DOORS",
       "seq": 4
     }
   ]

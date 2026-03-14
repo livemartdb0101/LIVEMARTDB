@@ -14,6 +14,8 @@
       "date": "2024-03-19",
       "title": "QUEEN RABBT 始動",
       "form": "",
+      "venue_id": 14,
+      "venue": "初台DOORS",
       "seq": 7
     },
     {
@@ -21,6 +23,8 @@
       "date": "2024-05-30",
       "title": "黒聖女の狂宴",
       "form": "",
+      "venue_id": 14,
+      "venue": "初台DOORS",
       "seq": 6
     },
     {
@@ -28,6 +32,8 @@
       "date": "2024-06-25",
       "title": "SENA BIRTHDAY 前夜祭 3MAN!!",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 2
     },
     {
@@ -35,6 +41,8 @@
       "date": "2024-08-22",
       "title": "ガオフェス2024 (｢･ω･)｢ 1日目だがお！",
       "form": "",
+      "venue_id": 14,
+      "venue": "初台DOORS",
       "seq": 6
     },
     {
@@ -42,6 +50,8 @@
       "date": "2024-10-10",
       "title": "渋谷女子会〜バンド天国",
       "form": "",
+      "venue_id": 14,
+      "venue": "初台DOORS",
       "seq": 5
     },
     {
@@ -49,6 +59,8 @@
       "date": "2024-11-09",
       "title": "CrazyFest Vol.245",
       "form": "",
+      "venue_id": 7,
+      "venue": "巣鴨獅子王",
       "seq": 5
     },
     {
@@ -56,6 +68,8 @@
       "date": "2024-11-23",
       "title": "超爆裂緑道2024〜翡翠の風神〜",
       "form": "",
+      "venue_id": 13,
+      "venue": "上野音横丁",
       "seq": 5
     },
     {
@@ -63,6 +77,8 @@
       "date": "2024-12-27",
       "title": "[8th EP] Release Party!!",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 2
     },
     {
@@ -70,6 +86,8 @@
       "date": "2025-01-25",
       "title": "CrazyFest Vol.252",
       "form": "",
+      "venue_id": 12,
+      "venue": "吉祥寺CRESCENDO",
       "seq": 3
     },
     {
@@ -77,6 +95,8 @@
       "date": "2025-02-09",
       "title": "CrazyFest EXTRA-15Vt.SP",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 1
     },
     {
@@ -84,6 +104,8 @@
       "date": "2025-03-10",
       "title": "Sproject×QUEEN RABBIT 2MAN SHOW",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 1
     },
     {
@@ -91,6 +113,8 @@
       "date": "2025-04-13",
       "title": "TETEFES",
       "form": "",
+      "venue_id": 6,
+      "venue": "SHIBUYA THE GAME",
       "seq": 6
     },
     {
@@ -98,6 +122,8 @@
       "date": "2025-05-06",
       "title": "CrazyFest",
       "form": "",
+      "venue_id": 7,
+      "venue": "巣鴨獅子王",
       "seq": 6
     },
     {
@@ -105,6 +131,8 @@
       "date": "2025-05-23",
       "title": "Journey to Blossom",
       "form": "",
+      "venue_id": 7,
+      "venue": "巣鴨獅子王",
       "seq": 1
     },
     {
@@ -112,6 +140,8 @@
       "date": "2025-06-04",
       "title": "零落の箱庭より",
       "form": "",
+      "venue_id": 11,
+      "venue": "池袋手刀",
       "seq": 1
     },
     {
@@ -119,6 +149,8 @@
       "date": "2025-06-26",
       "title": "On the day of my birthday",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 2
     },
     {
@@ -126,6 +158,8 @@
       "date": "2025-06-28",
       "title": "限定Acoustic Mini Oneman（第１部）",
       "form": "",
+      "venue_id": 10,
+      "venue": "吉祥寺DAYDREAM",
       "seq": 1
     },
     {
@@ -133,6 +167,8 @@
       "date": "2025-06-28",
       "title": "限定Acoustic Mini Oneman（第２部）",
       "form": "",
+      "venue_id": 10,
+      "venue": "吉祥寺DAYDREAM",
       "seq": 1
     },
     {
@@ -140,6 +176,8 @@
       "date": "2025-07-17",
       "title": "FROM UDAGAWA Vol.212",
       "form": "",
+      "venue_id": 8,
+      "venue": "東京渋谷チェルシーホテル",
       "seq": 4
     },
     {
@@ -147,6 +185,8 @@
       "date": "2025-08-15",
       "title": "HOTTY AND RHYTHM 2025",
       "form": "",
+      "venue_id": 9,
+      "venue": "所沢航空記念公園野外ステージ",
       "seq": 2
     },
     {
@@ -154,6 +194,8 @@
       "date": "2025-09-14",
       "title": "CrazyFest EXTRA-17",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 3
     },
     {
@@ -161,6 +203,8 @@
       "date": "2025-10-14",
       "title": "ZillionAutumnFESTIVAL2025",
       "form": "",
+      "venue_id": 2,
+      "venue": "サウンドノート名古屋",
       "seq": 5
     },
     {
@@ -168,6 +212,8 @@
       "date": "2025-10-27",
       "title": "Radiance",
       "form": "",
+      "venue_id": 3,
+      "venue": "両国SUNRISE",
       "seq": 4
     },
     {
@@ -175,6 +221,8 @@
       "date": "2025-11-20",
       "title": "NODEBASE",
       "form": "",
+      "venue_id": 4,
+      "venue": "吉祥寺SHUFFLE",
       "seq": 3
     },
     {
@@ -182,6 +230,8 @@
       "date": "2025-12-07",
       "title": "CrazyFest EXTRA-18",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 7
     },
     {
@@ -189,6 +239,8 @@
       "date": "2025-12-12",
       "title": "レコ発３マン！全員集合！",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 2
     },
     {
@@ -196,6 +248,8 @@
       "date": "2026-03-14",
       "title": "CrazyFest EXTRA-19",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 3
     }
   ]

@@ -14,6 +14,8 @@
       "date": "2024-06-25",
       "title": "SENA BIRTHDAY 前夜祭 3MAN!!",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 4
     },
     {
@@ -21,6 +23,8 @@
       "date": "2024-12-27",
       "title": "[8th EP] Release Party!!",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 5
     },
     {
@@ -28,6 +32,8 @@
       "date": "2025-03-10",
       "title": "Sproject×QUEEN RABBIT 2MAN SHOW",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 2
     },
     {
@@ -35,6 +41,8 @@
       "date": "2025-06-26",
       "title": "On the day of my birthday",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 4
     },
     {
@@ -42,6 +50,8 @@
       "date": "2025-12-12",
       "title": "レコ発３マン！全員集合！",
       "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
       "seq": 4
     }
   ]

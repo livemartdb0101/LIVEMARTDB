@@ -14,6 +14,8 @@
       "date": "2024-11-23",
       "title": "超爆裂緑道2024〜翡翠の風神〜",
       "form": "",
+      "venue_id": 13,
+      "venue": "上野音横丁",
       "seq": 1
     },
     {
@@ -21,6 +23,8 @@
       "date": "2025-01-25",
       "title": "CrazyFest Vol.252",
       "form": "",
+      "venue_id": 12,
+      "venue": "吉祥寺CRESCENDO",
       "seq": 7
     },
     {
@@ -28,6 +32,8 @@
       "date": "2025-02-09",
       "title": "CrazyFest EXTRA-15Vt.SP",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 10
     },
     {
@@ -35,6 +41,8 @@
       "date": "2025-05-06",
       "title": "CrazyFest",
       "form": "",
+      "venue_id": 7,
+      "venue": "巣鴨獅子王",
       "seq": 7
     },
     {
@@ -42,6 +50,8 @@
       "date": "2025-10-14",
       "title": "ZillionAutumnFESTIVAL2025",
       "form": "",
+      "venue_id": 2,
+      "venue": "サウンドノート名古屋",
       "seq": 6
     },
     {
@@ -49,6 +59,8 @@
       "date": "2025-12-07",
       "title": "CrazyFest EXTRA-18",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 6
     },
     {
@@ -56,6 +68,8 @@
       "date": "2026-03-14",
       "title": "CrazyFest EXTRA-19",
       "form": "",
+      "venue_id": 1,
+      "venue": "赤羽ReNY alpha",
       "seq": 2
     }
   ]

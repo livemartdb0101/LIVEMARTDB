@@ -14,6 +14,8 @@
       "date": "2024-08-22",
       "title": "ガオフェス2024 (｢･ω･)｢ 1日目だがお！",
       "form": "",
+      "venue_id": 14,
+      "venue": "初台DOORS",
       "seq": 3
     },
     {
@@ -21,6 +23,8 @@
       "date": "2025-07-17",
       "title": "FROM UDAGAWA Vol.212",
       "form": "",
+      "venue_id": 8,
+      "venue": "東京渋谷チェルシーホテル",
       "seq": 2
     },
     {
@@ -28,6 +32,8 @@
       "date": "2025-11-20",
       "title": "NODEBASE",
       "form": "",
+      "venue_id": 4,
+      "venue": "吉祥寺SHUFFLE",
       "seq": 2
     }
   ]

@@ -390,9 +390,12 @@ with sqlite3.connect(DB) as conn:
                    e.date,
                    e.title,
                    COALESCE(e.form,'') AS form,
+                   v.id AS venue_id,
+                   COALESCE(v.name, '') AS venue,
                    b.seq
             FROM bandsevent b
             JOIN events e ON e.id = b.event_id
+            LEFT JOIN venues v ON v.id = e.venue_id
             WHERE b.act_id = ?
             ORDER BY e.date, b.seq
         """, (aid,))
@@ -417,8 +420,16 @@ with sqlite3.connect(DB) as conn:
     # ============================================
     #  setlist.json（検索用）
     # ============================================
+    # rows = qall(cur, """
+    #     SELECT event_id, seq, song_id
+    #     FROM setlist
+    #     ORDER BY event_id, seq
+    # """)
+    # write_json(OUT / "setlist.json", rows)
+    ## --- setlist.json（検索用） ---
     rows = qall(cur, """
-        SELECT event_id, seq, song_id
+        SELECT event_id, seq, song_id,
+            LOWER(COALESCE(section,'')) AS section
         FROM setlist
         ORDER BY event_id, seq
     """)
