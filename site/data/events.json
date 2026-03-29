@@ -349,5 +349,18 @@
     "tour_id": null,
     "tour": "",
     "form": ""
+  },
+  {
+    "id": 28,
+    "date": "2026-03-27",
+    "title": "Sproject × QUEEN RABBIT 2MAN SHOW",
+    "sub_title": null,
+    "venue_id": 5,
+    "venue": "秋葉原CLUB GOODMAN",
+    "era_id": null,
+    "era": "",
+    "tour_id": null,
+    "tour": "",
+    "form": ""
   }
 ]

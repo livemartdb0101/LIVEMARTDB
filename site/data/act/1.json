@@ -251,6 +251,15 @@
       "venue_id": 1,
       "venue": "赤羽ReNY alpha",
       "seq": 3
+    },
+    {
+      "event_id": 28,
+      "date": "2026-03-27",
+      "title": "Sproject × QUEEN RABBIT 2MAN SHOW",
+      "form": "",
+      "venue_id": 5,
+      "venue": "秋葉原CLUB GOODMAN",
+      "seq": 1
     }
   ]
 }

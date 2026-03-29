@@ -10,6 +10,15 @@
       "venue_id": 1,
       "form": null,
       "role": "Drum"
+    },
+    {
+      "event_id": 28,
+      "date": "2026-03-27",
+      "title": "Sproject × QUEEN RABBIT 2MAN SHOW",
+      "venue": "秋葉原CLUB GOODMAN",
+      "venue_id": 5,
+      "form": null,
+      "role": "Drum"
     }
   ],
   "birthday": "",
