@@ -253,6 +253,15 @@
       "venue_id": 5,
       "form": null,
       "role": "Vocal"
+    },
+    {
+      "event_id": 29,
+      "date": "2026-04-19",
+      "title": "Hotty&Rhythm 2026 Spring Festival",
+      "venue": "所沢航空記念公園野外ステージ",
+      "venue_id": 9,
+      "form": null,
+      "role": "Vocal"
     }
   ],
   "birthday": "5月3日",

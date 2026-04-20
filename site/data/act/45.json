@@ -17,6 +17,15 @@
       "venue_id": 6,
       "venue": "SHIBUYA THE GAME",
       "seq": 1
+    },
+    {
+      "event_id": 29,
+      "date": "2026-04-19",
+      "title": "Hotty&Rhythm 2026 Spring Festival",
+      "form": "",
+      "venue_id": 9,
+      "venue": "所沢航空記念公園野外ステージ",
+      "seq": 1
     }
   ]
 }

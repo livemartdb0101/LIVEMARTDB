@@ -1,0 +1,138 @@
+{
+  "id": 29,
+  "date": "2026-04-19",
+  "title": "Hotty&Rhythm 2026 Spring Festival",
+  "sub_title": "satellite",
+  "venue": "所沢航空記念公園野外ステージ",
+  "venue_id": 9,
+  "era": "",
+  "era_id": null,
+  "tour": "",
+  "tour_id": null,
+  "form": "",
+  "video_url": "",
+  "acts": [
+    {
+      "seq": 1,
+      "name": "Buzzer01&.",
+      "act_id": 45
+    },
+    {
+      "seq": 2,
+      "name": "QUEEN RABBIT",
+      "act_id": 1
+    },
+    {
+      "seq": 3,
+      "name": "ユメノマニマニ",
+      "act_id": 81
+    },
+    {
+      "seq": 4,
+      "name": "エトランジェ",
+      "act_id": 82
+    },
+    {
+      "seq": 5,
+      "name": "小原涼",
+      "act_id": 39
+    },
+    {
+      "seq": 6,
+      "name": "maleficium",
+      "act_id": 83
+    },
+    {
+      "seq": 7,
+      "name": "RAIDEN",
+      "act_id": 44
+    },
+    {
+      "seq": 8,
+      "name": "天女神樂",
+      "act_id": 84
+    },
+    {
+      "seq": 9,
+      "name": "Risky Melody",
+      "act_id": 43
+    }
+  ],
+  "lineup": [
+    {
+      "person_id": 1,
+      "name": "Misaco",
+      "role": "Vocal",
+      "position": "",
+      "ord": 1
+    },
+    {
+      "person_id": 6,
+      "name": "Shinji",
+      "role": "Guitar",
+      "position": "",
+      "ord": 2
+    },
+    {
+      "person_id": 4,
+      "name": "Ryo",
+      "role": "Bass",
+      "position": "",
+      "ord": 3
+    },
+    {
+      "person_id": 7,
+      "name": "桐子",
+      "role": "Drum",
+      "position": "",
+      "ord": 4
+    }
+  ],
+  "setlist": [
+    {
+      "seq": 1,
+      "song_id": 1,
+      "song_title": "月下美人",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 2,
+      "song_id": 9,
+      "song_title": "偽りの楽園",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 3,
+      "song_id": 5,
+      "song_title": "My Servant",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 4,
+      "song_id": 6,
+      "song_title": "LOVE SPIDER",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    },
+    {
+      "seq": 5,
+      "song_id": 7,
+      "song_title": "OCEANUS",
+      "section": null,
+      "version": null,
+      "note": "",
+      "performer": []
+    }
+  ]
+}

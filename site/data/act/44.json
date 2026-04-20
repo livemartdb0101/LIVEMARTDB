@@ -17,6 +17,15 @@
       "venue_id": 7,
       "venue": "巣鴨獅子王",
       "seq": 4
+    },
+    {
+      "event_id": 29,
+      "date": "2026-04-19",
+      "title": "Hotty&Rhythm 2026 Spring Festival",
+      "form": "",
+      "venue_id": 9,
+      "venue": "所沢航空記念公園野外ステージ",
+      "seq": 7
     }
   ]
 }

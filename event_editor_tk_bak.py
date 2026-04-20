@@ -18,8 +18,7 @@ except Exception:
 from jpg2webp import convert_all_or_abort
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-# DB_PATH  = os.path.join(BASE_DIR, "eventdata.db")
-DB_PATH = None
+DB_PATH  = os.path.join(BASE_DIR, "eventdata.db")
 ROOT_DIR = r"."
 EXPORT_PY = os.path.join(ROOT_DIR, "export_json.py")
 
@@ -27,6 +26,7 @@ EXPORT_PY = os.path.join(ROOT_DIR, "export_json.py")
 # ====== DB 初期化・整合性チェック（A案：GUI起動前に1回だけ） ======
 
 ERROR_LOG_PATH = os.path.join(BASE_DIR, "error.log")
+
 
 def _exec_script(con: sqlite3.Connection, sql: str):
     cur = con.cursor()
@@ -2686,8 +2686,6 @@ def reload_event_caches(app_instance: "App"):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        DB_PATH = sys.argv[1]
     # ここで “無ければ作る／不足があれば補う”
     ensure_db()
 
