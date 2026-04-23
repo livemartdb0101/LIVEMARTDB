@@ -269,6 +269,15 @@
       "venue_id": 9,
       "venue": "所沢航空記念公園野外ステージ",
       "seq": 2
+    },
+    {
+      "event_id": 30,
+      "date": "2026-04-23",
+      "title": "Superfly VOL.20",
+      "form": "",
+      "venue_id": 15,
+      "venue": "新宿ANTIKNOCK",
+      "seq": 3
     }
   ]
 }

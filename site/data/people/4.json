@@ -262,6 +262,15 @@
       "venue_id": 9,
       "form": null,
       "role": "Bass"
+    },
+    {
+      "event_id": 30,
+      "date": "2026-04-23",
+      "title": "Superfly VOL.20",
+      "venue": "新宿ANTIKNOCK",
+      "venue_id": 15,
+      "form": null,
+      "role": "Bass"
     }
   ],
   "birthday": "9月11日",

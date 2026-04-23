@@ -1,6 +1,6 @@
 {
-  "id": 15,
-  "name": "落果",
+  "id": 88,
+  "name": "NEON ONI",
   "url": "",
   "x": "",
   "instagram": "",
@@ -10,22 +10,13 @@
   "tiktok": "",
   "events": [
     {
-      "event_id": 14,
-      "date": "2025-06-04",
-      "title": "零落の箱庭より",
-      "form": "",
-      "venue_id": 11,
-      "venue": "池袋手刀",
-      "seq": 5
-    },
-    {
       "event_id": 30,
       "date": "2026-04-23",
       "title": "Superfly VOL.20",
       "form": "",
       "venue_id": 15,
       "venue": "新宿ANTIKNOCK",
-      "seq": 1
+      "seq": 7
     }
   ]
 }
