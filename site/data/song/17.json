@@ -1,6 +1,6 @@
 {
   "id": 17,
-  "title": "I Remember you",
+  "title": "I Remember You / Skid Row",
   "events": [
     {
       "event_id": 2,
@@ -23,6 +23,17 @@
       "seq": 2,
       "section": null,
       "version": ""
+    },
+    {
+      "event_id": 31,
+      "date": "2026-05-03",
+      "title": "Misaco Birthday!!!",
+      "venue_id": 10,
+      "venue": "吉祥寺DAYDREAM",
+      "form": "",
+      "seq": 11,
+      "section": null,
+      "version": "cover"
     }
   ]
 }

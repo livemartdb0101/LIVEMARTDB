@@ -278,6 +278,15 @@
       "venue_id": 15,
       "venue": "新宿ANTIKNOCK",
       "seq": 3
+    },
+    {
+      "event_id": 31,
+      "date": "2026-05-03",
+      "title": "Misaco Birthday!!!",
+      "form": "",
+      "venue_id": 10,
+      "venue": "吉祥寺DAYDREAM",
+      "seq": 1
     }
   ]
 }

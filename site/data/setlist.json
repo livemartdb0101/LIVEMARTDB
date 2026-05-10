@@ -1204,5 +1204,95 @@
     "seq": 5,
     "song_id": 6,
     "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 1,
+    "song_id": 1,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 2,
+    "song_id": 3,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 3,
+    "song_id": 4,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 4,
+    "song_id": 11,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 5,
+    "song_id": 12,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 6,
+    "song_id": 15,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 7,
+    "song_id": 19,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 8,
+    "song_id": 5,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 9,
+    "song_id": 2,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 10,
+    "song_id": 20,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 11,
+    "song_id": 17,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 12,
+    "song_id": 18,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 13,
+    "song_id": 8,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 14,
+    "song_id": 7,
+    "section": ""
+  },
+  {
+    "event_id": 31,
+    "seq": 15,
+    "song_id": 1,
+    "section": "encore"
   }
 ]

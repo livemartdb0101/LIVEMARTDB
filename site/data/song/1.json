@@ -221,6 +221,28 @@
       "seq": 2,
       "section": null,
       "version": ""
+    },
+    {
+      "event_id": 31,
+      "date": "2026-05-03",
+      "title": "Misaco Birthday!!!",
+      "venue_id": 10,
+      "venue": "吉祥寺DAYDREAM",
+      "form": "",
+      "seq": 1,
+      "section": null,
+      "version": "piano 弾き語り"
+    },
+    {
+      "event_id": 31,
+      "date": "2026-05-03",
+      "title": "Misaco Birthday!!!",
+      "venue_id": 10,
+      "venue": "吉祥寺DAYDREAM",
+      "form": "",
+      "seq": 15,
+      "section": "encore",
+      "version": ""
     }
   ]
 }

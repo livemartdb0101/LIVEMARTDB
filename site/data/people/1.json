@@ -271,6 +271,15 @@
       "venue_id": 15,
       "form": null,
       "role": "Vocal"
+    },
+    {
+      "event_id": 31,
+      "date": "2026-05-03",
+      "title": "Misaco Birthday!!!",
+      "venue": "吉祥寺DAYDREAM",
+      "venue_id": 10,
+      "form": null,
+      "role": "Vocal"
     }
   ],
   "birthday": "5月3日",
